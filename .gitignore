@@ -1,2 +1,2 @@
-./pretrained_model/model_ginconcat_btwin_100k_d8000_l0.0001/model.pth
-./*/__pycache_/*
+pretrained_model/model_ginconcat_btwin_100k_d8000_l0.0001/model.pth
+*/__pycache_/*

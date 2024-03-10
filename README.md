@@ -14,20 +14,19 @@ Finally, the `raw_data` directory contains files from external references. This 
 You should be able to reproduce the main findings by creating a conda environment.  
 
 ```
-# Create a conda environment
-$ conda create --name mole python=3.7
-$ conda activate mole
+# Create the conda environment
+conda create --name mole python=3.8
+conda activate mole
 
-# Install the other packages used
-# Install pytorch
-$ pip install torch==1.7.1+cu110 torchvision==0.8.2+cu110 -f https://download.pytorch.org/whl/torch_stable.html
-$ pip install torch-geometric==1.6.3 torch-sparse==0.6.9 torch-scatter==2.0.6 -f https://pytorch-geometric.com/whl/torch-1.7.0+cu110.html
+# Install pytorch and pytorch geometric
+pip install torch==2.2.1 --index-url https://download.pytorch.org/whl/cu118
+pip install torch_geometric==2.5.0
 
-# Install RDKit. This step can take some time
-$ conda install -c conda-forge rdkit=2020.09.1.0
+# Install rdkit
+pip install rdkit==2022.3.3
 
-# Install additional dependencies
-$ pip install PyYAML==6.0 xgboost==1.6.2 seaborn==0.11.2
+# Other dependencies
+pip install pandas==2.0.3 xgboost==1.6.2
 ```
 
 ## Datasets

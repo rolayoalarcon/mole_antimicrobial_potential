@@ -27,7 +27,7 @@ $ pip install torch-geometric==1.6.3 torch-sparse==0.6.9 torch-scatter==2.0.6 -f
 $ conda install -c conda-forge rdkit=2020.09.1.0
 
 # Install additional dependencies
-$ pip install PyYAML==6.0 xgboost==1.6.2 scikit_learn==1.0.2 seaborn==0.11.2
+$ pip install PyYAML==6.0 xgboost==1.6.2 seaborn==0.11.2
 ```
 
 ## Datasets

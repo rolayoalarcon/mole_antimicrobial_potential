@@ -23,11 +23,11 @@ $ conda activate mole
 $ pip install torch==1.7.1+cu110 torchvision==0.8.2+cu110 -f https://download.pytorch.org/whl/torch_stable.html
 $ pip install torch-geometric==1.6.3 torch-sparse==0.6.9 torch-scatter==2.0.6 -f https://pytorch-geometric.com/whl/torch-1.7.0+cu110.html
 
-# Install additional dependencies
-$ pip install PyYAML==6.0 pandas==1.3.5 numpy==1.21.6 xgboost==1.6.2 scikit_learn==1.0.2 seaborn==0.11.2
-
-# Install RDKit
+# Install RDKit. This step can take some time
 $ conda install -c conda-forge rdkit=2020.09.1.0
+
+# Install additional dependencies
+$ pip install PyYAML==6.0 pandas==1.3.0 numpy==1.21.6 xgboost==1.6.2 scikit_learn==1.0.2 seaborn==0.11.2
 ```
 
 ## Datasets

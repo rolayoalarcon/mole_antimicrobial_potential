@@ -33,7 +33,7 @@ $ conda install -c conda-forge rdkit=2020.09.1.0
 ## Datasets
 This section is a brief description of the datasets used for our study. All raw data can be found in the `raw_data` directory.
 
-## Maier-2018 Library
+### Maier-2018 Library
 
 The data used in this study was obtained from the Supplementary Information of [Maier, 2018](https://www.nature.com/articles/nature25979#Abs1). The data can be found in `raw_data/maier_microbiome` subdirectory. In there, you will find:  
 
@@ -41,7 +41,7 @@ The data used in this study was obtained from the Supplementary Information of [
 2. screen_results_info_SF3.xlsx: The adjusted p-value table the results from the screening of 1,197 compounds against 40 bacterial strains.
 3. strain_info_SF2.xlsxP Additional information about the strains used in the original study.
 
-## MedChemExpress Library
+### MedChemExpress Library
 In the `raw_data/medchemexpress` subdirectory you will find the `chemical_library_cleaned.tsv.gz` file. This file contains information gathered directly from the MedChemExpress provider. This includes information such as the `Catalog Number` and the `Biological Activity` descriptions. In addition, in this file the known antibiotics are already highlighted as well as the corresponding ATC code.
 
 
@@ -128,6 +128,6 @@ pred_df = pd.DataFrame(y_scores, columns=["pred_score"], index=x_input.index)
 pred_df["pred_label"] = pred_df["pred_score"].apply(lambda x: 1 if x >= mole_optimal_threshold else 0)
 ```
 
-As a result, one has the 
+As a result, one has the predicted outcome for each compound-strain combination. Further downstream analysis can be found in `workflow/04.new_predictions.ipynb`
 
 

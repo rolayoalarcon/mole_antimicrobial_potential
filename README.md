@@ -50,7 +50,7 @@ Here you can find some details of the pre-trained model for molecular representa
 ### Pre-trained MolE
 Pre-training details can be found in our manuscript and the MolE repository. The hyperparameters of the pre-trained model are specified in `pretrained_model/model_ginconcat_btwin_100k_d8000_l0.0001/config.yaml`. Briefly, they are the following: $\lambda = 10^{-4} \text{,  } z \in \mathbb{R}^{8000}$, pre-trained on 100,000 molecules.   
 
-You can download the model binary file from Zenodo and place it in the `pretrained_model/model_ginconcat_btwin_100k_d8000_l0.0001/` subdirectory.  
+You can download the model binary file from [here](https://zenodo.org/records/10803099?token=eyJhbGciOiJIUzUxMiJ9.eyJpZCI6ImI3NTg0OTU0LTI5YWItNDgxZS04OGYyLTU5MmM1MjcwYzJjZiIsImRhdGEiOnt9LCJyYW5kb20iOiIzNzgyNTE5ZGU5N2MzZWI3YjZiZjkwYTIzZjFiMmEwZSJ9.oL6G0WZKxIowSb-2qdP55cPhef1W4yG5iF4PFlsWPpuPROmzRhutJtySzs9q02ACltl0qy9YPJjzB7NvzRMyaw) and place the `model.pth` file in the `pretrained_model/model_ginconcat_btwin_100k_d8000_l0.0001/` subdirectory.  
 To get the pre-trained representation of a new set of molecules you will need a tab-separated file that contains:  
 
 1. A column that identifies each molecule

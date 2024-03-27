@@ -45,6 +45,18 @@ BONDDIR_LIST = [
 
 # A FUNCTION TO READ SMILES from file 
 def read_smiles(data_path, smile_col="rdkit_no_salt", id_col="prestwick_ID"):
+
+    """
+    Read SMILES data from a file and remove invalid SMILES.
+
+    Parameters:
+    - data_path (str): Path to the file containing SMILES data.
+    - smile_col (str, optional): Name of the column containing SMILES strings (default is "rdkit_no_salt").
+    - id_col (str, optional): Name of the column containing molecule IDs (default is "prestwick_ID").
+
+    Returns:
+    - smile_df (pandas.DataFrame): DataFrame containing SMILES data with specified columns.
+    """
     
     # Read the data
     smile_df = pd.read_csv(data_path, sep='\t', index_col=0)
@@ -60,6 +72,17 @@ def read_smiles(data_path, smile_col="rdkit_no_salt", id_col="prestwick_ID"):
 
 # A FUNCTION TO CALCULATE DESCRIPTORS
 def calc_descriptors(smiles, id):
+    """
+    Calculate molecular descriptors for a given SMILES string.
+    ORIGINAL FUNCTION FROM ALGAVI & BORENSTEIN, 2023
+
+    Parameters:
+    - smiles (str): SMILES string of the molecule.
+    - id (str): ID of the molecule.
+
+    Returns:
+    - smiles_df (pandas.DataFrame): DataFrame containing calculated molecular descriptors.
+    """
 
     #define mol
     mol = Chem.MolFromSmiles(smiles)
@@ -188,6 +211,16 @@ def calc_descriptors(smiles, id):
 
 # Here we can add more molecular descriptors
 class MoleculeDataset(Dataset):
+
+    """
+    Dataset class for creating molecular graphs.
+
+    Attributes:
+    - smile_df (pandas.DataFrame): DataFrame containing SMILES data.
+    - smile_column (str): Name of the column containing SMILES strings.
+    - id_column (str): Name of the column containing molecule IDs.
+    """
+
     def __init__(self, smile_df, smile_column, id_column):
         super(Dataset, self).__init__()
 
@@ -255,6 +288,17 @@ def _generate_scaffold(smiles, include_chirality=False):
 
 # Function to separate structures based on scaffolds
 def generate_scaffolds(smile_list):
+
+    """
+    Generate molecular MURCKO scaffolds from a list of SMILES strings.
+
+    Parameters:
+    - smile_list (list): List of SMILES strings.
+
+    Returns:
+    - scaffold_sets (list): List of scaffold sets.
+    """
+
     scaffolds = {}
     data_len = len(smile_list)
 
@@ -276,6 +320,21 @@ def generate_scaffolds(smile_list):
 
 # Separate train, validation and test sets based on scaffolds
 def scaffold_split(data_df, valid_size, test_size, smile_column, id_column):
+    """
+    Split data based on molecular scaffolds.
+
+    Parameters:
+    - data_df (pandas.DataFrame): DataFrame containing data to split.
+    - valid_size (float): Proportion of data to allocate for validation.
+    - test_size (float): Proportion of data to allocate for testing.
+    - smile_column (str): Name of the column containing SMILES strings.
+    - id_column (str): Name of the column containing molecule IDs.
+
+    Returns:
+    - train_ids (list): List of molecule IDs for the training set.
+    - valid_ids (list): List of molecule IDs for the validation set.
+    - test_ids (list): List of molecule IDs for the test set.
+    """
 
     # Determine molecular scaffolds
     dataset = data_df[smile_column].tolist()
@@ -311,6 +370,21 @@ def scaffold_split(data_df, valid_size, test_size, smile_column, id_column):
 # Function to split the dataset
 def split_dataset(smile_df, valid_size, test_size, split_strategy, smile_col, id_col):
 
+    """
+    Split dataset into training, validation, and test sets.
+
+    Parameters:
+    - smile_df (pandas.DataFrame): DataFrame containing SMILES data.
+    - valid_size (float): Proportion of data to allocate for validation.
+    - test_size (float): Proportion of data to allocate for testing.
+    - split_strategy (str): Splitting strategy ("random" or "scaffold").
+    - smile_col (str): Name of the column containing SMILES strings.
+    - id_col (str): Name of the column containing molecule IDs.
+
+    Returns:
+    - splitted_smiles_df (pandas.DataFrame): DataFrame with split information.
+    """
+
     # Determine the splitting strategy
     if split_strategy == "random":
 
@@ -342,6 +416,22 @@ def split_dataset(smile_df, valid_size, test_size, split_strategy, smile_col, id
 
 # Function to generate the molecular representation with MolE
 def batch_representation(smile_df, dl_model, column_str, id_str, batch_size= 10_000, id_is_str=True, device="cuda:0"):
+
+    """
+    Generate molecular representations using a Deep Learning model.
+
+    Parameters:
+    - smile_df (pandas.DataFrame): DataFrame containing SMILES data.
+    - dl_model: Deep Learning model for molecular representation.
+    - column_str (str): Name of the column containing SMILES strings.
+    - id_str (str): Name of the column containing molecule IDs.
+    - batch_size (int, optional): Batch size for processing (default is 10,000).
+    - id_is_str (bool, optional): Whether IDs are strings (default is True).
+    - device (str, optional): Device for computation (default is "cuda:0").
+
+    Returns:
+    - chem_representation (pandas.DataFrame): DataFrame containing molecular representations.
+    """
     
     # First we create a list of graphs
     molecular_graph_dataset = MoleculeDataset(smile_df, column_str, id_str)
@@ -399,6 +489,19 @@ def batch_representation(smile_df, dl_model, column_str, id_str, batch_size= 10_
 # Function to load a pre-trained model
 def load_pretrained_model(pretrain_architecture, pretrained_model, pretrained_dir = "../pretrained_model", device="cuda:0"):
 
+    """
+    Load a pre-trained MolE model.
+
+    Parameters:
+    - pretrain_architecture (str): Architecture of the pre-trained model.
+    - pretrained_model (str): Name of the pre-trained MolE model.
+    - pretrained_dir (str, optional): Directory containing pre-trained models (default is "../pretrained_model").
+    - device (str, optional): Device for computation (default is "cuda:0").
+
+    Returns:
+    - model: Loaded pre-trained model.
+    """
+
     # Read model configuration
     config = yaml.load(open(os.path.join(pretrained_dir, pretrained_model, "config.yaml"), "r"), Loader=yaml.FullLoader)
     model_config = config["model"]
@@ -420,6 +523,16 @@ def load_pretrained_model(pretrain_architecture, pretrained_model, pretrained_di
 # Function to generate the ECFP4 as an array
 def fp_array(fingerprin_object):
 
+    """
+    Convert fingerprint object to NumPy array.
+
+    Parameters:
+    - fingerprin_object: Fingerprint object.
+
+    Returns:
+    - array (numpy.ndarray): NumPy array representation of the fingerprint.
+    """
+
     # Initialise an array full of zeros
     array = np.zeros((0,), dtype=np.int8)
 
@@ -430,6 +543,18 @@ def fp_array(fingerprin_object):
 
 # Function to generate the ECFP4 representation
 def generate_fps(smile_df, smile_col, id_col):
+
+    """
+    Generate Extended-Connectivity Fingerprints (ECFP4) representations for molecules.
+
+    Parameters:
+    - smile_df (pandas.DataFrame): DataFrame containing SMILES data.
+    - smile_col (str): Name of the column containing SMILES strings.
+    - id_col (str): Name of the column containing molecule IDs.
+
+    Returns:
+    - fps_dataframe (pandas.DataFrame): DataFrame containing ECFP4 representations.
+    """
 
     # Generate fingerprints
     mol_objs = [Chem.MolFromSmiles(smile) for smile in smile_df[smile_col].tolist()]
@@ -445,6 +570,18 @@ def generate_fps(smile_df, smile_col, id_col):
     return fps_dataframe
 
 def generate_descriptors(smile_df, smile_col, id_col):
+
+    """
+    Generate molecular descriptors for molecules.
+
+    Parameters:
+    - smile_df (pandas.DataFrame): DataFrame containing SMILES data.
+    - smile_col (str): Name of the column containing SMILES strings.
+    - id_col (str): Name of the column containing molecule IDs.
+
+    Returns:
+    - chemdesc_df (pandas.DataFrame): DataFrame containing molecular descriptors.
+    """
 
 
     # Iterate over chemicals, making sure to catch exceptions
@@ -469,6 +606,25 @@ def process_dataset(dataset_path, pretrain_architecture, pretrained_model,
                     split_approach="scaffold", validation_proportion=0.1, test_proportion=0.1, 
                     smile_column_str = "rdkit_no_salt", id_column_str = "prestwick_ID",
                     split_data=True):
+    
+    """
+    Process the dataset to generate molecular representations.
+
+    Parameters:
+    - dataset_path (str): Path to the dataset file.
+    - pretrain_architecture (str): Architecture of the pre-trained model or method ("ECFP4", "ChemDesc", or custom).
+    - pretrained_model (str): Name of the pre-trained model (if applicable).
+    - split_approach (str, optional): Splitting approach ("scaffold" or "random") (default is "scaffold").
+    - validation_proportion (float, optional): Proportion of data to allocate for validation (default is 0.1).
+    - test_proportion (float, optional): Proportion of data to allocate for testing (default is 0.1).
+    - smile_column_str (str, optional): Name of the column containing SMILES strings (default is "rdkit_no_salt").
+    - id_column_str (str, optional): Name of the column containing molecule IDs (default is "prestwick_ID").
+    - split_data (bool, optional): Whether to split the dataset into train, validation, and test sets (default is True).
+
+    Returns:
+    - splitted_smiles_df (pandas.DataFrame): DataFrame with split information if split_data=True.
+    - udl_representation (pandas.DataFrame): DataFrame containing molecular representations if split_data=False.
+    """
 
     # First we read in the smiles as a dataframe
     smiles_df = read_smiles(dataset_path, smile_col=smile_column_str, id_col=id_column_str)

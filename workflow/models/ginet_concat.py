@@ -50,16 +50,23 @@ class GINEConv(MessagePassing):
 
 
 class GINet(nn.Module):
+   
     """
+    GIN encoder from MolE.
+
     Args:
-        num_layer (int): the number of GNN layers
-        emb_dim (int): dimensionality of embeddings for each graph layer
-        max_pool_layer (int): the layer from which we use max pool rather than add pool for neighbor aggregation
-        drop_ratio (float): dropout rate
+        num_layer (int): Number of GNN layers.
+        emb_dim (int): Dimensionality of embeddings for each graph layer.
+        feat_dim (int): Dimensionality of embedding vector.
+        drop_ratio (float): Dropout rate.
+        pool (str): Pooling method for neighbor aggregation ('mean', 'max', or 'add').
+
     Output:
-        node representations
+        h_global_embedding: Graph-level representation
+        out: Final embedding vector
     """
     def __init__(self, num_layer=5, emb_dim=300, feat_dim=256, drop_ratio=0, pool='mean'):
+        
         super(GINet, self).__init__()
         self.num_layer = num_layer
         self.emb_dim = emb_dim
@@ -106,7 +113,6 @@ class GINet(nn.Module):
 
             nn.Linear(self.feat_dim, self.feat_dim)
         )
-
     def forward(self, data):
         x = data.x
         edge_index = data.edge_index

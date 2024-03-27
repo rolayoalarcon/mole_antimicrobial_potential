@@ -8,7 +8,7 @@ The `data` directory contains the output of each step in `workflow` in a subfold
 
 The `pretrained_model` directory contains the MolE pre-trained model used to get the molecular representation.  
 
-Finally, the `raw_data` directory contains files from external references. This includes the data from [Maier, 2018](https://www.nature.com/articles/nature25979#Abs1), as well as the chemical library on which we make new predictions. 
+Finally, the `raw_data` directory contains files from external references. This includes the data from [Maier, 2018](https://www.nature.com/articles/nature25979#Abs1).
 
 ## Environment setup  
 You should be able to reproduce the main findings by creating a conda environment.  
@@ -39,10 +39,6 @@ The data used in this study was obtained from the Supplementary Information of [
 1. chem_library_info_SF1.xlsx: An overview of the 2,000 compounds that make up the Prestwick Library used the original study.
 2. screen_results_info_SF3.xlsx: The adjusted p-value table the results from the screening of 1,197 compounds against 40 bacterial strains.
 3. strain_info_SF2.xlsxP Additional information about the strains used in the original study.
-
-### MedChemExpress Library
-In the `raw_data/medchemexpress` subdirectory you will find the `chemical_library_cleaned.tsv.gz` file. This file contains information gathered directly from the MedChemExpress provider. This includes information such as the `Catalog Number` and the `Biological Activity` descriptions. In addition, in this file the known antibiotics are already highlighted as well as the corresponding ATC code.
-
 
 ## Models  
 Here you can find some details of the pre-trained model for molecular representation and the XGBoost model used for antimicrobial prediction.
@@ -85,18 +81,6 @@ scaffold_split, mole_representation = process_dataset(dataset_path = "prestwick_
 ```
 Further documentation for this function can be found in the docstrings `workflow/dataset/dataset_representation.py`
 
-### XGBoost model
-
-The binary files of the XGBoost models trained to predict antimicrobial activity can be found in `data/03.model_evaluation`. The model can be loaded using the [pickle](https://docs.python.org/3/library/pickle.html) module. 
-
-```
-# Import pickle module
-import pickle
-
-# Load the model
-with open("MolE-XGBoost-08.03.2024_14.20.pkl", "rb") as file:
-    mole_model = pickle.load(file)
-```
 
 Predictions of activity can be made for each strain present in the [Maier, 2018](https://www.nature.com/articles/nature25979#Abs1) study. This is done by concatenating one-hot-encoded vectors to the molecular representation. The resulting matrix will have $N_{molecules} * N_{strains}$ rows. In this way, predictions can be made for each compound-strain combination. Examples of how this is done can be seen in `workflow/04.new_predictions.ipynb` using the `add_strains()` function.  
 
@@ -111,7 +95,7 @@ x_input = add_strains(mole_representation, strain_ohe)
 y_scores = mole_model.predict_proba(x_input)
 ```
 
-To binarize the resulting scores into a `1` or `0` label, one can use the optimized score thresholds. The optimized thresholds can be found in `data/03.model_evaluation/optimal_thresholds.tsv.gz`.
+To binarize the resulting scores into a `1` or `0` label, one can use the optimized score thresholds.
 
 ```
 # Read in the optimal threshold data.

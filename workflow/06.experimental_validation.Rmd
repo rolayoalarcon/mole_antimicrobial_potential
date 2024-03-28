@@ -1475,19 +1475,92 @@ ggsave(plot=gentime.bp, filename = file.path(GPARAM_OUTPUT_DIR, paste0(compound_
 ```
   
   
+
+```{r}
+library(ggpubr)
+```
+  
+  
 ```{r lag.phase.ebastine}
-compound.params %>% 
+sa.ebas.lg <- compound.params %>% 
   filter(organism == "SA", 
          chem_conc == "16") %>% 
   
   ggplot(aes(x=compound, y=startPoint_x, fill=compound)) +
     geom_boxplot(width=0.8) +
     geom_point(fill="black") +
+  
+  scale_fill_manual(values=c("grey", "#1f78b4", "#DE1F84")) + 
     
     theme_light() +
-    theme(legend.position = "none") +
+    theme(legend.position = "none",
+          text = element_text(size=10)) +
     labs(x="",
-         title = paste(compound_n, "- End of Lag Phase - S. aureus"))
+         y="Time of end of lag-phase (h)",
+         title = "Time of end of lag-phase")
+
+
+sa.ebas.sp <- compound.params %>% 
+  filter(organism == "SA", 
+         chem_conc == "16") %>% 
+  
+  ggplot(aes(x=compound, y=reachMaximum_x, fill=compound)) +
+    geom_boxplot(width=0.8) +
+    geom_point(fill="black") +
+  
+  scale_fill_manual(values=c("grey", "#1f78b4", "#DE1F84")) + 
+    
+    theme_light() +
+    theme(legend.position = "none",
+          text = element_text(size=10)) +
+    labs(x="",
+         y="Time of start of stationary-phase (h)",
+         title = "Time of start of stationary-phase")
+
+sa.ebas.maxOD <- compound.params %>% 
+  filter(organism == "SA", 
+         chem_conc == "16") %>% 
+  
+  ggplot(aes(x=compound, y=maximum_y, fill=compound)) +
+    geom_boxplot(width=0.8) +
+    geom_point(fill="black") +
+  
+  scale_fill_manual(values=c("grey", "#1f78b4", "#DE1F84")) + 
+    
+    theme_light() +
+    theme(legend.position = "none",
+          text = element_text(size=10)) +
+    labs(x="",
+         y="Maximum OD",
+         title = "Maximum amount of growth")
+
+sa.ebas.gent <- compound.params %>% 
+  filter(organism == "SA", 
+         chem_conc == "16") %>% 
+  
+  ggplot(aes(x=compound, y=generation_time, fill=compound)) +
+    geom_boxplot(width=0.8) +
+    geom_point(fill="black") +
+  
+  scale_fill_manual(values=c("grey", "#1f78b4", "#DE1F84")) + 
+    
+    theme_light() +
+    theme(legend.position = "none",
+          text = element_text(size=10)) +
+    labs(x="",
+         y="Doubling time (h)",
+         title = "Greatest Doubling Time")
+
+
+fig_growth = ggarrange(sa.ebas.maxOD, sa.ebas.gent,
+                       sa.ebas.lg, sa.ebas.sp,
+          nrow = 2,
+          ncol = 2,
+          labels = c("a", "b", "c", "d"),
+          font.label = list(size = 12, color = "black", face = "plain")) 
+fig_growth
+
+ggsave(plot=fig_growth, filename = file.path(OUTPUT_DIR, "sa_ebastine_gparam_boxplots.pdf"), dpi=300, height = 15, width = 21, units = "cm")
 ```
 
 We can look at the average increase in the start of the growth 
@@ -1583,18 +1656,84 @@ ggsave(plot=gentime.bp, filename = file.path(GPARAM_OUTPUT_DIR, paste0(compound_
 
  
 ```{r lag.phase.opicapone}
-compound.params %>% 
+sa.opi.lg <- compound.params %>% 
   filter(organism == "SA", 
          chem_conc == "16") %>% 
   
   ggplot(aes(x=compound, y=startPoint_x, fill=compound)) +
     geom_boxplot(width=0.8) +
     geom_point(fill="black") +
+  
+  scale_fill_manual(values=c("grey", "#1f78b4", "#DE1F84")) + 
     
     theme_light() +
-    theme(legend.position = "none") +
+    theme(legend.position = "none",
+          text = element_text(size=10)) +
     labs(x="",
-         title = paste(compound_n, "- End of Lag Phase - S. aureus"))
+         y="Time of end of lag-phase (h)",
+         title = "Time of end of lag-phase")
+
+sa.opi.sp <- compound.params %>% 
+  filter(organism == "SA", 
+         chem_conc == "16") %>% 
+  
+  ggplot(aes(x=compound, y=reachMaximum_x, fill=compound)) +
+    geom_boxplot(width=0.8) +
+    geom_point(fill="black") +
+  
+  scale_fill_manual(values=c("grey", "#1f78b4", "#DE1F84")) + 
+    
+    theme_light() +
+    theme(legend.position = "none",
+          text = element_text(size=10)) +
+    labs(x="",
+         y="Time of start of stationary-phase (h)",
+         title = "Time of start of stationary-phase")
+
+sa.opi.maxOD <- compound.params %>% 
+  filter(organism == "SA", 
+         chem_conc == "16") %>% 
+  
+  ggplot(aes(x=compound, y=maximum_y, fill=compound)) +
+    geom_boxplot(width=0.8) +
+    geom_point(fill="black") +
+  
+  scale_fill_manual(values=c("grey", "#1f78b4", "#DE1F84")) + 
+    
+    theme_light() +
+    theme(legend.position = "none",
+          text = element_text(size=10)) +
+    labs(x="",
+         y="Maximum OD",
+         title = "Maximum amount of growth")
+
+sa.opi.gent <- compound.params %>% 
+  filter(organism == "SA", 
+         chem_conc == "16") %>% 
+  
+  ggplot(aes(x=compound, y=generation_time, fill=compound)) +
+    geom_boxplot(width=0.8) +
+    geom_point(fill="black") +
+  
+  scale_fill_manual(values=c("grey", "#1f78b4", "#DE1F84")) + 
+    
+    theme_light() +
+    theme(legend.position = "none",
+          text = element_text(size=10)) +
+    labs(x="",
+         y="Doubling time (h)",
+         title = "Greatest Doubling Time")
+
+
+fig_growth = ggarrange(sa.opi.maxOD, sa.opi.gent,
+                       sa.opi.lg, sa.opi.sp,
+          nrow = 2,
+          ncol = 2,
+          labels = c("a", "b", "c", "d"),
+          font.label = list(size = 12, color = "black", face = "plain")) 
+fig_growth
+
+ggsave(plot=fig_growth, filename = file.path(OUTPUT_DIR, "sa_opicapone_gparam_boxplots.pdf"), dpi=300, height = 15, width = 21, units = "cm")
 ```
 
     

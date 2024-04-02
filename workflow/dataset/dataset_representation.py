@@ -278,6 +278,12 @@ class MoleculeDataset(Dataset):
     def __len__(self):
         return len(self.smiles_data)
     
+    def get(self, index):
+        self.__getitem__(index)
+
+    def len():
+        return self.__len__()
+    
 
 # Function to generate the molecular scaffolds
 def _generate_scaffold(smiles, include_chirality=False):
@@ -602,10 +608,16 @@ def generate_descriptors(smile_df, smile_col, id_col):
     return chemdesc_df
 
 # Main function to process the dataset
-def process_dataset(dataset_path, pretrain_architecture, pretrained_model, 
-                    split_approach="scaffold", validation_proportion=0.1, test_proportion=0.1, 
-                    smile_column_str = "rdkit_no_salt", id_column_str = "prestwick_ID",
-                    split_data=True):
+def process_dataset(dataset_path,
+                    smile_column_str = "rdkit_no_salt", 
+                    id_column_str = "prestwick_ID",
+                    pretrain_architecture=None, 
+                    pretrained_model = None, 
+                    split_approach="scaffold", 
+                    validation_proportion=0.1, 
+                    test_proportion=0.1, 
+                    dataset_split=True,
+                    device="cuda:0"):
     
     """
     Process the dataset to generate molecular representations.
@@ -613,13 +625,14 @@ def process_dataset(dataset_path, pretrain_architecture, pretrained_model,
     Parameters:
     - dataset_path (str): Path to the dataset file.
     - pretrain_architecture (str): Architecture of the pre-trained model or method ("ECFP4", "ChemDesc", or custom).
-    - pretrained_model (str): Name of the pre-trained model (if applicable).
+    - pretrained_model (str): Name of the pre-trained model. Can also be "MolCLR" or "ECFP4".
     - split_approach (str, optional): Splitting approach ("scaffold" or "random") (default is "scaffold").
     - validation_proportion (float, optional): Proportion of data to allocate for validation (default is 0.1).
     - test_proportion (float, optional): Proportion of data to allocate for testing (default is 0.1).
     - smile_column_str (str, optional): Name of the column containing SMILES strings (default is "rdkit_no_salt").
     - id_column_str (str, optional): Name of the column containing molecule IDs (default is "prestwick_ID").
-    - split_data (bool, optional): Whether to split the dataset into train, validation, and test sets (default is True).
+    - dataset_split (bool, optional): Whether to split the dataset into train, validation, and test sets (default is True).
+    - device (str): Device to use for computation (default is "cuda:0"). Can also be "cpu".
 
     Returns:
     - splitted_smiles_df (pandas.DataFrame): DataFrame with split information if split_data=True.
@@ -630,24 +643,23 @@ def process_dataset(dataset_path, pretrain_architecture, pretrained_model,
     smiles_df = read_smiles(dataset_path, smile_col=smile_column_str, id_col=id_column_str)
 
     # The we split the dataset into train, validation and test
-    if split_data:
+    if dataset_split:
         splitted_smiles_df = split_dataset(smiles_df, validation_proportion, test_proportion, split_approach, smile_column_str, id_column_str)
 
     # Determine the representation
-    if pretrain_architecture == "ECFP4":
+    if pretrained_model == "ECFP4":
         udl_representation = generate_fps(smiles_df, smile_column_str, id_column_str)
         
-    elif pretrain_architecture == "ChemDesc":
+    elif pretrained_model == "ChemDesc":
         udl_representation = generate_descriptors(smiles_df, smile_column_str, id_column_str)
     
     else:
         # Now we load our pretrained model
-        pmodel = load_pretrained_model(pretrain_architecture, pretrained_model)
-
+        pmodel = load_pretrained_model(pretrain_architecture, pretrained_model, device=device)
         # Obtain the requested representation
-        udl_representation = batch_representation(smiles_df, pmodel, smile_column_str, id_column_str)
+        udl_representation = batch_representation(smiles_df, pmodel, smile_column_str, id_column_str, device=device)
 
-    if split_data:
+    if dataset_split:
         return splitted_smiles_df, udl_representation
     
     else:

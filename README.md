@@ -62,7 +62,7 @@ from dataset.dataset_representation import process_dataset
 mole_representation = process_dataset(dataset_path = "novel_abx_smiles.tsv.gz", 
                                                   pretrain_architecture = "gin_concat", 
                                                   pretrained_model = "model_ginconcat_btwin_100k_d8000_l0.0001", 
-                                                  split_data=False,
+                                                  dataset_split=False,
                                                   smile_column_str = "pchem_canonical_smiles", 
                                                   id_column_str = "compound")
 ```
@@ -72,7 +72,8 @@ The same function can also be used to split the data into training, validation, 
 ```
 scaffold_split, mole_representation = process_dataset(dataset_path = "prestwick_library_screened.tsv.gz", 
                                                   pretrain_architecture = "gin_concat", 
-                                                  pretrained_model = "model_ginconcat_btwin_100k_d8000_l0.0001", 
+                                                  pretrained_model = "model_ginconcat_btwin_100k_d8000_l0.0001",
+                                                  dataset_split=True,
                                                   split_approach = "scaffold", 
                                                   validation_proportion = 0.1, 
                                                   test_proportion = 0.1, 

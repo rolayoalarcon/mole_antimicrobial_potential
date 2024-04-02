@@ -279,9 +279,9 @@ class MoleculeDataset(Dataset):
         return len(self.smiles_data)
     
     def get(self, index):
-        self.__getitem__(index)
+        return self.__getitem__(index)
 
-    def len():
+    def len(self):
         return self.__len__()
     
 

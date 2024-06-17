@@ -59,7 +59,7 @@ def read_smiles(data_path, smile_col="rdkit_no_salt", id_col="prestwick_ID"):
     """
     
     # Read the data
-    smile_df = pd.read_csv(data_path, sep='\t', index_col=0)
+    smile_df = pd.read_csv(data_path, sep='\t')
     smile_df = smile_df[[smile_col, id_col]]
 
     # Remove NaN

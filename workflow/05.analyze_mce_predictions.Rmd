@@ -1,5 +1,5 @@
 ---
-title: "Analysing MolE predictions"
+title: "Analysing MCE predictions"
 author: "Roberto Olayo Alarcon"
 date: "27/03/2024"
 output: github_document
@@ -51,6 +51,30 @@ mole_predictions.over10 <- read_excel(file.path(PREDICTIONS_DIR, "mole_mce_predi
 
 # Read the representation  
 mole_representation <- vroom::vroom(file.path(PREDICTIONS_DIR, "MolE_representation_medchemexpress.tsv.gz"),
+                                 show_col_types = FALSE) %>% 
+  
+  # Rename id column
+  rename("Catalog Number" = "...1") %>% 
+  
+  # Filter for the molecules for which we make predictions
+  filter(`Catalog Number` %in% mole_predictions$`Catalog Number`) %>% 
+  
+  # Set column to row.names
+  column_to_rownames("Catalog Number")
+```
+
+
+```{r read.fps}
+
+# Read Prediction Output
+ecfp4_predictions <- read_excel(file.path(PREDICTIONS_DIR, "ecfp4_mce_predictions_litsearch.xlsx"), sheet = "ecfp4_prediction_overview")
+
+ecfp4_predictions.over10 <- read_excel(file.path(PREDICTIONS_DIR, "ecfp4_mce_predictions_litsearch.xlsx"), sheet = "ecfp4_over10") %>% 
+  mutate(`Reported Activity` = if_else(is.na(`Reported Activity`), "None", `Reported Activity`))
+
+
+# Read the representation  
+ecfp4_representation <- vroom::vroom(file.path(PREDICTIONS_DIR, "ecfp4_representation_medchemexpress.tsv.gz"),
                                  show_col_types = FALSE) %>% 
   
   # Rename id column
@@ -182,7 +206,105 @@ preprocess_mole <- function(mole_df, min.var, corr.thresh){
 mole_prepared <- preprocess_mole(mole_representation, min.var=0.01, corr.thresh=0.90)
 mole_prepared %>% dim()
 ```
+
   
+  
+Similar procedure for ECFP4 representation  
+  
+```{r preprocess.fps}
+
+hamming <- function(X) {
+    D <- (1 - X) %*% t(X)
+    HamDist <- D + t(D)
+    
+    return(HamDist / ncol(X))
+}
+
+remove_rare <-  function(f.df, min_chems){
+  
+  # Removes columns where a feature is not present in the majority of compounds
+  #   
+  #   Parameters
+  #   ----------
+  #   - fdf: pandas dataframe. Columns are bits of the fingerprint. Rows are compounds
+  #   - mc: int. The minimum number of molecules a feature should be present in order for it to be preserved
+  
+  
+  # Number of chemicals a feature is present in
+  n.freq <- colSums(f.df)
+  names(n.freq) <- colnames(f.df)
+  
+  # Filter popular features
+  common.features <- n.freq[n.freq >= min_chems]
+  
+  # Alter df
+  
+  f.common <- f.df %>% 
+    select(all_of(names(common.features)))
+  
+  
+  return(f.common)
+}
+
+remove_correlated <- function(f.df, min_dist){
+  
+  # Removes highly similar features
+  # 
+  #   Parameters
+  #   ----------
+  #   - fdf: pandas dataframe. Dataframe where columns are bits in the fingerprint
+  #   - mdist: float. Is minimal distance between features in order to be different enough
+  # 
+  #   Returns
+  #   -------
+  #   pandas dataframe
+  #   Highly correlated features are removed (one of them is preserved)
+  
+  # Hamming distance
+  dist.matrix <-  hamming(t(f.df))
+  
+  # Format 
+  dist.matrix[lower.tri(dist.matrix, diag = TRUE)] <- 1
+  
+  # Find correlated columns
+  corr.descision <- apply(dist.matrix, 2, function(x){ifelse(any(x <= min_dist), "remove", "remain")})
+  
+  # Only keep un-correlated feats
+  keep_cols <- names(corr.descision[corr.descision == "remain"])
+  
+  
+  # Filter df
+  f.uncorr <- f.df %>% 
+    select(all_of(as.character(keep_cols)))
+  
+  
+  return(f.uncorr)}
+
+
+preprocess_fps <- function(fps_df, min_compounds, sim_threshold){
+  
+
+    # Processes a fingerprint dataframe. Removes rare and highly correlated features
+    # 
+    # Parameters
+    # ----------
+    # - fps_df: pandas dataframe. Dataframe where columns are bits in the fingerprint
+    # - min_compounds: int. The minimum number of molecules a feature should be present in order for it to be preserved
+    # - sim_threshold: float. Is minimal distance between features in order to be different enough
+    
+  
+  fps_common <-  remove_rare(fps_df, min_compounds)
+  
+  fps.decorr <-  remove_correlated(fps_common, sim_threshold)
+  
+  return(fps.decorr)
+}
+
+
+ecfp4_prepared <- preprocess_fps(ecfp4_representation, 10, 0.01)
+ecfp4_prepared %>% dim()
+```
+
   
 ### Peform UMAP reduction. 
   
@@ -202,7 +324,7 @@ mole.umap <- as.data.frame(mole.umap) %>%
 
 ```
 
-  
+
 ```{r mole.umap.plot}
 mole.umap %>% 
   
@@ -216,6 +338,41 @@ ggplot(aes(x=V1, y=V2)) +
        y = "UMAP 2",
        title = "MolE representation of MCE")
 ```
+
+
+```{r ecfp4.umap}
+
+# Jaccard distance
+jac.dist <- dist(ecfp4_prepared, method = "binary")
+
+set.seed(1234)
+ecfp4.umap <- umap(X=jac.dist,
+                 n_neighbors = 20,
+                 n_components = 2,
+                 min_dist = 0.3, 
+                 n_threads = 20)
+
+
+ecfp4.umap <- as.data.frame(ecfp4.umap) %>% 
+  rownames_to_column("catalog_number")
+
+```
+
+  
+```{r ecfp4.umap.plot}
+ecfp4.umap %>% 
+  
+ggplot(aes(x=V1, y=V2)) +
+ geom_point(alpha=0.9, color="white", fill="#C5C5C5",
+             size=2, shape=21, stroke=0.2) +
+  
+  theme_classic() + 
+  
+  labs(x="UMAP 1", 
+       y = "UMAP 2",
+       title = "ECFP4 representation of MCE")
+```
+
 
   
 ### Plotting predicted broad-spectrum. 
@@ -253,8 +410,42 @@ m.umap.over10 <- ggplot(mole.umap, aes(x=V1, y=V2)) +
 
 m.umap.over10
 ```
-
   
+    
+```{r ecfp4.umap.over10}
+  
+# Add information of broad-spectrum activity
+ecfp4.umap <- ecfp4.umap %>% 
+  mutate(pred_activity = if_else(catalog_number %in% mole_predictions.over10$`Catalog Number`, "Antimicrobial", "Not Antimicrobial"))
+
+
+# Plot 
+e.umap.over10 <- ggplot(ecfp4.umap, aes(x=V1, y=V2)) +
+  
+  geom_point(data=subset(ecfp4.umap, pred_activity == "Not Antimicrobial"), aes(color="Not Antimicrobial"), size=1.5) +
+  geom_point(data=subset(ecfp4.umap, pred_activity == "Antimicrobial"), aes(color="Antimicrobial"), size=1.5) +
+  
+  scale_color_manual(values=c("Antimicrobial" = alpha("#DE1F84", 0.7), "Not Antimicrobial" = alpha("#C5C5C5", 0.7))) +
+  
+  theme_void() +
+  #coord_fixed(ratio = 0.4) +
+  
+  theme(legend.position = "bottom",
+    axis.ticks.x = element_blank(),
+        axis.text.x = element_blank(),
+        axis.ticks.y = element_blank(),
+        axis.text.y = element_blank(),
+        text=element_text(size=10),
+        panel.background = element_rect(fill = "transparent", color=NA),
+      plot.background = element_rect(fill = "transparent", colour = NA)) +
+  
+  labs(x="UMAP 1",
+       y="UMAP 2",
+       color="Predicted Activity")
+
+e.umap.over10
+```
+
 ## Ranking molecule predictions. 
   
 Here we will create plots that compare the antimicrobial activity and the number of predicted inhibited strains.   
@@ -287,7 +478,35 @@ ggplot(aes(x=nk_total, y=apscore_total, color=antibiotic)) +
 score.vs.nkill.marginal <- ggExtra::ggMarginal(scatter.nkill.apscore, type="boxplot", groupColour = TRUE, groupFill = TRUE)
 score.vs.nkill.marginal
 ```
+  
+```{r plot.ap.vs.nk.e}
 
+# Format labels
+scatter.nkill.apscore.e <- ecfp4_predictions %>% 
+  mutate(antibiotic = if_else(antibiotic == "abx", "Antibiotic", "Non-Antibiotic")) %>% 
+
+# Create plots
+ggplot(aes(x=nk_total, y=apscore_total, color=antibiotic)) +
+  geom_point(alpha=0.5, size=1) +
+  
+  scale_color_manual(breaks = c("Antibiotic", "Non-Antibiotic"),
+                     values=c("red", "#C5C5C5")) +
+  
+  geom_vline(xintercept = 10, linetype="longdash") +
+  
+  theme_light() +
+  labs(x="Predicted number of inhibited strains",
+       y = "Antimicrobial Potential",
+       color="Compound Class") +
+  theme(legend.position = c(0.7, 0.3),
+        text=element_text(size=10),
+        legend.text = element_text(size=8),
+        legend.title = element_text(size=8))
+  
+
+score.vs.nkill.marginal.e <- ggExtra::ggMarginal(scatter.nkill.apscore.e, type="boxplot", groupColour = TRUE, groupFill = TRUE)
+score.vs.nkill.marginal.e
+```
 
 
 ## Comparing Gram stains. 
@@ -312,8 +531,15 @@ uridin.deriv <- c("Uridine",
                   "Doxifluridine")
   
 # Other interests
+# Other interests
 other.interest <- c("Tannic acid",
-                    "Teniposide")
+                    "Teniposide",
+                    "Mequitazine",
+                    "Dimetridazole",
+                    "Azelnipidine",
+                    "Luliconazole",
+                    "Bergenin")
+
 
 # Format Product Names
 selected.chemicals.data <- mole_predictions.over10 %>% 
@@ -328,7 +554,7 @@ other.interest.data <- mole_predictions.over10 %>%
 
 
 # Plot
-mole_predictions.over10 %>% 
+predBS.mole <- mole_predictions.over10 %>% 
   
   # Only non-antibiotics
   filter(antibiotic == "not_abx") %>% 
@@ -363,8 +589,85 @@ mole_predictions.over10 %>%
   labs(x = latex2exp::TeX("Antimicrobial Potential $G^-$"),
        y = latex2exp::TeX("Antimicrobial Potential $G^+$"))
   
-  
+predBS.mole
 ```
+
+```{r gneg.vs.gpos.labels.e}
+
+# Selected chemicals
+selected_chems <- c("Visomitin", 
+               "Ebastine", 
+               "Opicapone",
+               "Cetrorelix (Acetate)",
+               'Thymidine',
+               "Elvitegravir")
+
+# Uridine derivatives
+uridin.deriv <- c("Uridine",
+                  "Uridine 5'-monophosphate",
+                  "5-Methyluridine",
+                  "2'-Deoxyuridine",
+                  "Doxifluridine")
+  
+# Other interests
+other.interest <- c("Tannic acid",
+                    "Teniposide",
+                    "Dimetridazole",
+                    "Azelnipidine",
+                    "Luliconazole",
+                    "Bergenin")
+
+
+# Format Product Names
+selected.chemicals.data <- ecfp4_predictions.over10 %>% 
+  mutate(ProductName = if_else(ProductName %in% selected_chems, ProductName, ""),
+         ProductName = if_else(ProductName == "Cetrorelix (Acetate)", "Cetrorelix", ProductName))
+
+uridine.deriv.data <- ecfp4_predictions.over10 %>% 
+   mutate(ProductName = if_else(ProductName %in% uridin.deriv, ProductName, ""))
+
+other.interest.data <- ecfp4_predictions.over10 %>% 
+   mutate(ProductName = if_else(ProductName %in% other.interest, ProductName, ""))
+
+# Plot
+predBS.fps <- ecfp4_predictions.over10 %>% 
+  
+  # Only non-antibiotics
+  filter(antibiotic == "not_abx") %>% 
+  mutate(`Reported Activity` = if_else(`Reported Activity` %in% c("Antiplasmodium", "Insecticide"), "Antiparasitic", `Reported Activity`)) %>% 
+  
+  
+  ggplot(aes(x=apscore_gnegative, y=apscore_gpositive, color=`Reported Activity`)) +
+  
+  # Basic aes
+  geom_point(size=1) +
+  geom_abline(linetype="longdash", alpha=0.25) +
+  
+  # Add names
+  geom_text_repel(data = selected.chemicals.data, aes(x=apscore_gnegative, y=apscore_gpositive, label=ProductName), 
+                  max.overlaps = Inf, size=2, min.segment.length = 0, color="black", box.padding = 0.7, point.padding = 0.2, fontface="bold",
+                  nudge_x = if_else(selected.chemicals.data$ProductName %in% c("Cetrorelix", "Ebastine"), -1, 0)) +
+  
+  geom_text_repel(data = uridine.deriv.data, aes(x=apscore_gnegative, y=apscore_gpositive, label=ProductName), 
+                  max.overlaps = Inf, size=1.8, min.segment.length = 0, color="black", box.padding = 0.7, point.padding = 0.2,
+                  nudge_x = if_else(uridine.deriv.data$ProductName %in% c("Uridine"), -1, 0)) +
+  
+  geom_text_repel(data = other.interest.data, aes(x=apscore_gnegative, y=apscore_gpositive, label=ProductName), 
+                  max.overlaps = Inf, size=1.8, min.segment.length = 0, color="black", box.padding = 0.7, point.padding = 0.2) +
+  
+  # Color by reported activity
+  scale_color_manual(breaks = c("Antibacterial", "Antiviral", "Antifungal", "Antiparasitic", "None"),
+                    values = c("#1b9e77", "#d95f02", "#7570b3", "#e7298a", "#C5C5C5")) +
+  
+  theme_light() +
+  theme(legend.position = "bottom",
+        text = element_text(size=10)) +
+  labs(x = latex2exp::TeX("Antimicrobial Potential $G^-$"),
+       y = latex2exp::TeX("Antimicrobial Potential $G^+$"))
+
+predBS.fps
+```
+
   
 ## Propotion with reported activity
   
@@ -408,7 +711,426 @@ reported.g <- ggplot(proportion.known.activity, aes(x=n, y=x, fill=`Reported Act
 reported.g
 
 ```
+    
+```{r activity.counts.e}
+
+
+# Get the activity counts
+proportion.known.activity.e <- ecfp4_predictions.over10 %>% 
   
+  # Only consider non-antibiotics
+  filter(antibiotic == "not_abx") %>% 
+  
+  # Consolidate antiparasitic category
+  mutate(`Reported Activity` = if_else(`Reported Activity` %in% c("Antiplasmodium", "Insecticide"), "Antiparasitic", `Reported Activity`)) %>% 
+  
+  count(`Reported Activity`) %>% 
+  
+  mutate(`Reported Activity` = factor(`Reported Activity`, levels=c("None", "Antiparasitic", "Antifungal", "Antiviral","Antibacterial")),
+         x=" ")
+
+
+# Gather 
+reported.g.e <- ggplot(proportion.known.activity.e, aes(x=n, y=x, fill=`Reported Activity`)) +
+   geom_bar(position="fill", stat="identity", color="black") +
+  scale_fill_manual(breaks = c("Antibacterial", "Antiviral", "Antifungal", "Antiparasitic", "None"),
+                    values = c("#1b9e77", "#d95f02", "#7570b3", "#e7298a", "#C5C5C5")) +
+  
+  theme_classic() +
+  
+  coord_flip() +
+  
+  theme(text=element_text(size=10),
+        legend.position = "right",
+        aspect.ratio = 3,
+        legend.text = element_text(size = 8),
+        legend.title = element_text(size=8)) +
+  labs(x="Proportion with reported activity", 
+       y="Predicted antimicrobial", 
+       fill = "Reported Activity")
+
+reported.g.e
+
+```
+
+  
+## Comparing MolE and ECFP4 predictions. 
+  
+```{r global.comparison.ap}
+
+mole_complete_comp <- mole_predictions %>% 
+  select(`Catalog Number`, nk_total, apscore_total, antibiotic, ProductName) %>% 
+  rename("mole_nk_total" = "nk_total",
+         "mole_apscore_total" = "apscore_total")
+
+
+ecfp4_complete_comp <- ecfp4_predictions %>% 
+  select(`Catalog Number`, nk_total, apscore_total) %>% 
+  rename("ecfp4_nk_total" = "nk_total",
+         "ecfp4_apscore_total" = "apscore_total")
+
+
+complete_pred_comparison <- ecfp4_complete_comp %>% 
+  left_join(mole_complete_comp, by='Catalog Number') %>% 
+   mutate(antibiotic = if_else(antibiotic == "abx", "Antibiotic", "Non-Antibiotic"))
+
+
+
+
+ap_comparison <- ggplot(complete_pred_comparison, aes(x=mole_apscore_total, y=ecfp4_apscore_total, color=antibiotic)) +
+  
+  geom_point(alpha=0.5, size=1) +
+  geom_abline(linetype="longdash", alpha=0.5, color="blue") +
+  
+  scale_color_manual(breaks = c("Antibiotic", "Non-Antibiotic"),
+                     values=c("red", "#C5C5C5")) +
+  
+  theme_light() +
+  tune::coord_obs_pred() +
+  
+  #geom_smooth(method="lm", aes(color=NULL), formula=y~x) +
+  
+  labs(x="MolE AP",
+       y="ECFP4 AP",
+       color="Compound Class") +
+  
+  theme(legend.position = "none",
+        text=element_text(size=10),
+        legend.text = element_text(size=8),
+        legend.title = element_text(size=8))
+
+
+ap_comparison.marginal <- ggExtra::ggMarginal(ap_comparison, type="boxplot", groupColour = TRUE, groupFill = TRUE)
+ap_comparison.marginal
+```
+
+```{r global.comparison.nk}
+ggplot(complete_pred_comparison, aes(x=mole_nk_total, y=ecfp4_nk_total, color=antibiotic)) +
+  
+  geom_point(alpha=0.5, size=1) +
+  geom_abline(linetype="longdash", alpha=0.5, color="blue") +
+  
+  geom_vline(xintercept = 10,linetype="longdash", alpha=0.5, color="black") +
+  geom_hline(yintercept = 10,linetype="longdash", alpha=0.5, color="black") +
+  
+  scale_color_manual(breaks = c("Antibiotic", "Non-Antibiotic"),
+                     values=c("red", "#C5C5C5")) +
+  
+  theme_light() +
+  
+  labs(title="Predicted number of inhibited strains comparison",
+       x="MolE",
+       y="ECFP4",
+       color="Compound Class") +
+  
+  theme(text=element_text(size=10),
+        legend.text = element_text(size=8),
+        legend.title = element_text(size=8))
+```
+  
+Comparing predicted broad spectrum compounds. 
+  
+```{r ggvenn.lib}
+library(ggvenn)
+```
+
+
+
+```{r broad.spec.venn}
+fsize <- 3.5
+
+# Complete comparison of broad spectrum antimicrobials
+broad.list <- list("MolE" = mole_predictions.over10$`Catalog Number`,
+                   "ECFP4" = ecfp4_predictions.over10$`Catalog Number`)
+
+venn.abx.comparison <- ggvenn(broad.list,
+       fill_color = c("#DE1F84", "#1F9DBB"),
+       set_name_size=fsize,
+       text_size=fsize)
+
+venn.abx.comparison
+
+# Comparison of broad spectrum antimicrobials no antibiotics
+broad.list <- list("MolE" = mole_predictions.over10 %>% filter(antibiotic == "not_abx") %>% select(`Catalog Number`) %>% unlist(),
+                   "ECFP4" = ecfp4_predictions.over10 %>% filter(antibiotic == "not_abx") %>% select(`Catalog Number`) %>% unlist())
+
+venn.nonabx.comparison <- ggvenn(broad.list,
+       fill_color = c("#DE1F84", "#1F9DBB"),
+       set_name_size=fsize,
+       text_size=fsize)
+
+```
+
+
+Now compare results from literature search. 
+  
+```{r litsearch.comparison}
+
+
+proportion.known.activity <- proportion.known.activity %>% 
+  mutate(representation = "MolE")
+
+
+proportion.known.activity.e <- proportion.known.activity.e %>% 
+  mutate(representation = "ECFP4")
+
+proportion.comparison <- bind_rows(proportion.known.activity, 
+                                   proportion.known.activity.e)
+
+
+
+
+reported.bar.comparison <- ggplot(proportion.comparison, aes(x=n, y=representation, fill=`Reported Activity`)) +
+  
+   geom_bar(position="fill", stat="identity", color="black") +
+  scale_fill_manual(breaks = c("Antibacterial", "Antiviral", "Antifungal", "Antiparasitic", "None"),
+                    values = c("#1b9e77", "#d95f02", "#7570b3", "#e7298a", "#C5C5C5")) +
+  
+  theme_classic() +
+  
+  coord_flip() +
+  
+  theme(text=element_text(size=10),
+        legend.position = "right",
+        aspect.ratio = 2,
+        legend.text = element_text(size = 8),
+        legend.title = element_text(size=8)) +
+  
+  
+  labs(y="", 
+       x="Proportion", 
+       fill = "Reported Activity")
+
+reported.bar.comparison
+
+```
+
+
+```{r proportion.abx.broad}
+
+mole.o10.abx <- mole_predictions.over10 %>% 
+  count(antibiotic) %>% 
+  mutate(representation = "MolE")
+
+ecfp4.o10.abx <- ecfp4_predictions.over10 %>% 
+  count(antibiotic) %>% 
+  mutate(representation = "ECFP4")
+  
+
+over10.abx <- bind_rows(mole.o10.abx, ecfp4.o10.abx) %>% 
+  mutate(antibiotic = if_else(antibiotic == "abx", "Antibiotic", "Other"),
+         antibiotic = factor(antibiotic, levels=c("Other", "Antibiotic")))
+
+
+abx.bar.comparison <- ggplot(over10.abx, aes(x=n, y=representation, fill=antibiotic)) +
+  
+   geom_bar(position="fill", stat="identity", color="black") +
+  scale_fill_manual(breaks = c("Other", "Antibiotic"),
+                    values = c("#C5C5C5", "red")) +
+  
+  theme_classic() +
+  
+  coord_flip() +
+  
+  theme(text=element_text(size=10),
+        legend.position = "right",
+        aspect.ratio = 2,
+        legend.text = element_text(size = 8),
+        legend.title = element_text(size=8)) +
+  
+  
+  labs(y="", 
+       x="Proportion", 
+       fill = "Compound Class")
+
+abx.bar.comparison
+```
+  
+Comparing predicted broad spectrum. 
+  
+```{r comparing.over10}
+
+mole.litsearch <- mole_predictions.over10 %>% 
+  filter(antibiotic == "not_abx") %>% 
+  select(`Catalog Number`, `Reported Activity`, ProductName) %>% 
+  
+  # Consolidate antiparasitic category
+  mutate(`Reported Activity` = if_else(`Reported Activity` %in% c("Antiplasmodium", "Insecticide"), "Antiparasitic", `Reported Activity`))
+
+
+ecfp4.litsearch <- ecfp4_predictions.over10 %>% 
+  filter(antibiotic == "not_abx") %>% 
+  select(`Catalog Number`, `Reported Activity`, ProductName) %>% 
+  
+  # Consolidate antiparasitic category
+  mutate(`Reported Activity` = if_else(`Reported Activity` %in% c("Antiplasmodium", "Insecticide"), "Antiparasitic", `Reported Activity`))
+
+
+combined.litsearch <- bind_rows(mole.litsearch, ecfp4.litsearch) %>% 
+  distinct()
+
+
+mole_o10 <- mole_predictions %>% 
+  filter(`Catalog Number` %in% combined.litsearch$`Catalog Number`) %>% 
+  select(`Catalog Number`, nk_total, apscore_total) %>% 
+  
+   rename("mole_nk_total" = "nk_total",
+         "mole_apscore_total" = "apscore_total")
+
+
+ecfp4_o10 <- ecfp4_predictions %>% 
+  filter(`Catalog Number` %in% combined.litsearch$`Catalog Number`) %>% 
+  select(`Catalog Number`, nk_total, apscore_total) %>% 
+  
+   rename("ecfp4_nk_total" = "nk_total",
+         "ecfp4_apscore_total" = "apscore_total")
+
+
+
+broadS.comp <- combined.litsearch %>% 
+  left_join(mole_o10, by="Catalog Number") %>% 
+  left_join(ecfp4_o10, by="Catalog Number")
+```
+
+
+
+```{r broadS.comp}
+
+
+# Selected chemicals
+selected_chems <- c("Visomitin", 
+               "Ebastine", 
+               "Opicapone",
+               "Cetrorelix (Acetate)",
+               'Thymidine',
+               "Elvitegravir")
+  
+# Other interests
+other.interest <- c("Bergenin",
+                    "Fenticonazole (Nitrate)",
+                    "Doxifluridine",
+                    "Broxyquinoline",
+                    "Triclabendazole",
+                    "Octenidine (dihydrochloride)",
+                    "Benzalkonium (chloride)",
+                    "Simeprevir")
+
+
+# Format Product Names
+selected.chemicals.data <- broadS.comp %>% 
+  mutate(ProductName = if_else(ProductName %in% selected_chems, ProductName, ""),
+         ProductName = if_else(ProductName == "Cetrorelix (Acetate)", "Cetrorelix", ProductName))
+
+other.interest.data <- broadS.comp %>% 
+   mutate(ProductName = if_else(ProductName %in% other.interest, ProductName, ""),
+          ProductName = if_else(ProductName == "Fenticonazole (Nitrate)", "Fenticonazole", ProductName),
+          ProductName = if_else(ProductName == "Octenidine (dihydrochloride)", "Octenidine", ProductName),
+          ProductName = if_else(ProductName == "Benzalkonium (chloride)", "Benzalkonium", ProductName))
+
+
+
+nk.comparison <- ggplot(broadS.comp, aes(x=mole_nk_total, y=ecfp4_nk_total, color=`Reported Activity`))  +
+  
+  geom_vline(xintercept = 10, linetype="longdash", color="black", alpha=0.5) +
+  geom_hline(yintercept=10, linetype="longdash", color="black", alpha=0.5) + 
+  
+  geom_point(alpha=0.5) +
+  geom_abline(linetype="longdash", color="red", alpha=0.5) +
+
+   # Add names
+  geom_text_repel(data = selected.chemicals.data, aes(x=mole_nk_total, y=ecfp4_nk_total, label=ProductName), 
+                  max.overlaps = Inf, size=2, min.segment.length = 0, color="black", box.padding = 0.7, point.padding = 0.2, fontface="bold",
+                  nudge_x = if_else(selected.chemicals.data$ProductName %in% c("Cetrorelix", "Ebastine"), -1, 0)) +
+  
+  geom_text_repel(data = other.interest.data, aes(x=mole_nk_total, y=ecfp4_nk_total, label=ProductName), 
+                  max.overlaps = Inf, size=2, min.segment.length = 0, color="black", box.padding = 0.7, point.padding = 0.2) +
+  
+  
+  
+  scale_color_manual(breaks = c("Antibacterial", "Antiviral", "Antifungal", "Antiparasitic", "None"),
+                    values = c("#1b9e77", "#d95f02", "#7570b3", "#e7298a", "#C5C5C5")) +
+  
+  theme_light() +
+  
+  labs(x="MolE - N. inhibited strains",
+       y="ECFP4 - N. inhibited strains")
+
+nk.comparison
+
+```
+
+## Figure panels. 
+
+```{r fig.arrange}
+library(ggpubr)
+```
+
+ 
+```{r fps.fig.recreate}
+
+top_row <- ggarrange(e.umap.over10 + theme(aspect.ratio = 0.4), reported.g.e, labels = c("a", "b"), 
+          widths = c(2, 1),font.label = list(face="plain"))
+
+bottom_row <- ggarrange(score.vs.nkill.marginal.e, predBS.fps + theme(legend.position = "none"),
+          labels = c("c", "d"), font.label = list(face="plain"))
+
+pred.fps.panel <- ggarrange(top_row, bottom_row, ncol = 1, nrow = 2, heights = c(0.8, 1))
+pred.fps.panel
+ggsave(filename = "../data/05.analyze_mce_predictions/ecfp4_mce_overview.pdf", 
+       plot=pred.fps.panel,
+       width = 21, height = 15, units="cm", dpi=300)
+```
+
+```{r mole.prediction.overview}
+
+top_row <- ggarrange(m.umap.over10 + theme(aspect.ratio = 0.4), reported.g, labels = c("a", "b"), 
+          widths = c(2, 1),font.label = list(face="plain"))
+
+bottom_row <- ggarrange(score.vs.nkill.marginal, predBS.mole + theme(legend.position = "none"),
+          labels = c("c", "d"), font.label = list(face="plain"))
+
+pred.mole.panel <- ggarrange(top_row, bottom_row, ncol = 1, nrow = 2, heights = c(0.8, 1))
+pred.mole.panel
+ggsave(filename = "../data/05.analyze_mce_predictions/mole_mce_overview.pdf", 
+       plot=pred.mole.panel,
+       width = 21, height = 15, units="cm", dpi=300)
+
+```
+
+
+## Model comparison. 
+  
+```{r panel.comparison}
+top_row <- ggarrange(ap_comparison.marginal, 
+                     nk.comparison + theme(legend.position = "none"),
+                     labels = c("a", "b"), 
+                     font.label = list(face="plain"))
+
+
+bar.grid <- ggarrange(abx.bar.comparison, 
+                      reported.bar.comparison, 
+                      labels = c("c", "d"),
+                      font.label = list(face="plain")) 
+
+venn.panel <- ggarrange(venn.abx.comparison, venn.nonabx.comparison,
+          labels = c("e", "f"),
+          font.label = list(face="plain"))
+
+
+comparison.panel <- ggarrange(top_row,
+                              bar.grid, 
+                              venn.panel,
+                              ncol = 1, 
+                              nrow = 3)
+
+comparison.panel
+
+ggsave(filename = "../data/05.analyze_mce_predictions/mce_pred_comparison.pdf",
+       plot=comparison.panel,
+       width = 21, height = 29, units="cm", dpi=300)
+```
+
+
   
 ## Session Info
 

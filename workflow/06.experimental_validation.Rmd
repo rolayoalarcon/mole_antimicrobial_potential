@@ -30,6 +30,124 @@ if(!dir.exists(OUTPUT_DIR)){
 
 
 ```
+
+  
+## Taxonimic tree of species
+
+```{r import.ggtree, message=FALSE}
+
+library(ggtree)
+
+```
+
+First we can read the taxanomic tree data.  
+  
+```{r read.tree}
+taxtree <- treeio::read.newick(file.path(RAW_DATA_DIR, "maier_microbiome/phyliptree_wPath.phy"))
+```
+
+Read strain metadata. 
+ 
+```{r strain.metadata}
+
+strain_metadata <- read_excel(file.path(RAW_DATA_DIR, "maier_microbiome/strain_info_SF2.xlsx"),
+                              skip = 2)
+
+# Gather Gram strains
+strain_gram <- strain_metadata %>% select(Species, `Gram stain`) %>% 
+  filter(!is.na(Species))
+```
+
+Now we can clean up the strain names from NCBI.  
+
+```{r clean.names.tree}
+process_strain_name <- function(strain){
+  
+  # Pre-process strain name
+  strain_red <- str_remove_all(strain, "'")
+  strain_red <- str_remove_all(strain_red, "\\[")
+  strain_red <- str_remove_all(strain_red, "\\]")
+  
+  #print(strain_red)
+  if(str_starts(strain_red, "Escherichia")){
+    return(strain_red)
+  
+  
+  }else{
+    strain_red <- paste(str_split(strain_red, " ", simplify = TRUE)[, 1:2], collapse = " ")
+    return(strain_red)
+  }
+  
+}
+
+taxtree$tip.label <- sapply(taxtree$tip.label, process_strain_name)
+```
+  
+Now we can assign some labels to these taxons. 
+
+
+
+```{r tip.metadata}
+validation_strains <- c("Escherichia coli CFT073", 
+                        "Pseudomonas aeruginosa",
+                        "Staphylococcus aureus",
+                        "Klebsiella pneumoniae",
+                        "Escherichia coli IAI1")
+
+
+tip.use <- data.frame(Species=taxtree$tip.label) %>% 
+  
+  mutate(strain_use = if_else(Species %in% validation_strains, "Validation", "Training")) %>% 
+  
+  rename("label" = "Species")
+
+
+# Add gram stain information
+tip.gram <- data.frame(Species=taxtree$tip.label) %>% 
+  left_join(strain_gram, by="Species") %>% 
+  
+  # Manual addition of some gram stain
+  mutate(`Gram stain` = case_when(Species %in% c("Escherichia coli CFT073", 
+                                                 "Pseudomonas aeruginosa",
+                                                 "Klebsiella pneumoniae",
+                                                 "Escherichia coli IAI1", 
+                                                 "Fusobacterium nucleatum",
+                                                 "Segatella copri",
+                                                 "Phocaeicola vulgatus") ~ "negative",
+                        
+                        Species %in% c("Staphylococcus aureus", 
+                                       "Clostridioides difficile",
+                                       "Bifidobacterium longum",
+                                       "Thomasclavelia ramosa",
+                                       "Agathobacter rectalis",
+                                       "Enterocloster bolteae",
+                                       "Mediterraneibacter gnavus",
+                                       "Lacticaseibacillus paracasei") ~ "positive",
+                        TRUE ~ `Gram stain`),
+         
+         `Gram stain` = str_to_title(`Gram stain`)) %>% 
+  rename("label" = "Species")
+```
+  
+Now we can plot the tree
+
+```{r plot.tree}
+p.tree <- ggtree(taxtree, branch.length = "none") %<+% tip.use %<+% tip.gram +
+  geom_tippoint(aes(color=strain_use, shape=`Gram stain`)) +
+  geom_tiplab(size=2.8, offset = .1)+
+  hexpand(ratio=.15) +
+  vexpand(ratio = .0000001) +
+  xlim(-.1, 7) +
+  labs(color="Strain usage")
+
+p.tree
+```
+Save the tree
+
+```{r save.tree}
+ggsave(plot=p.tree, filename = file.path(OUTPUT_DIR, "taxtree.pdf"),
+       dpi=300, width = 19, height = 18, units = "cm")
+```
   
   
 ## Read Optical Density. 

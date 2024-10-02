@@ -1,0 +1,111 @@
+Bacteria
+++Thermodesulfobacteriota
+| \-Bilophila wadsworthia ATCC 49260
+++Verrucomicrobiota
+| \-Akkermansia muciniphila ATCC BAA-835
++-Pseudomonadota
+| \-Gammaproteobacteria
+|   ++Pseudomonadales
+|   | \-Pseudomonas aeruginosa PA14
+|   \-Enterobacterales
+|     \-Enterobacteriaceae
+|       ++Klebsiella
+|       | \-Klebsiella pneumoniae FCF1305
+|       \-Escherichia
+|         \-Escherichia coli
+|           +-Escherichia coli ED1a
+|           +-Escherichia coli IAI1
+|           \-Escherichia coli CFT073
+++Fusobacteriota
+| \-Fusobacterium nucleatum subsp. nucleatum ATCC 25586
++-Actinomycetota
+| +-Coriobacteriia
+| | ++Eggerthellales
+| | | \-Eggerthella lenta DSM 2243
+| | \+Coriobacteriales
+| |   \-Collinsella aerofaciens ATCC 25986
+| \+Actinomycetes
+|   \-Bifidobacterium
+|     +-Bifidobacterium adolescentis
+|     | \-Bifidobacterium adolescentis ATCC 15703
+|     \-Bifidobacterium longum
+|       \-Bifidobacterium longum subsp. longum
++-Bacillota
+| ++Negativicutes
+| | \-Veillonella parvula DSM 2008
+| ++Erysipelotrichia
+| | \-Thomasclavelia ramosa DSM 1402
+| +-Clostridia
+| | +-Lachnospirales
+| | | \-Lachnospiraceae
+| | |   ++Agathobacter
+| | |   | \-Agathobacter rectalis DSM 17629
+| | |   ++Lacrimispora
+| | |   | \-[Clostridium] saccharolyticum WM1
+| | |   +-Roseburia
+| | |   | +-Roseburia hominis
+| | |   | | \-Roseburia hominis A2-183
+| | |   | \-Roseburia intestinalis
+| | |   |   \-Roseburia intestinalis L1-82
+| | |   ++Lachnospira
+| | |   | \-[Eubacterium] eligens ATCC 27750
+| | |   ++Coprococcus
+| | |   | \-Coprococcus comes ATCC 27758
+| | |   ++Enterocloster
+| | |   | \-Enterocloster bolteae ATCC BAA-613
+| | |   ++Dorea
+| | |   | \-Dorea formicigenerans ATCC 27755
+| | |   +-Mediterraneibacter
+| | |   | +-Mediterraneibacter gnavus
+| | |   | | \-Mediterraneibacter gnavus ATCC 29149
+| | |   | \-[Ruminococcus] torques
+| | |   |   \-[Ruminococcus] torques ATCC 27756
+| | |   \+Blautia
+| | |     \-Blautia obeum ATCC 29174
+| | ++Peptostreptococcales
+| | | \-Clostridioides difficile 630
+| | \-Eubacteriales
+| |   ++Oscillospiraceae
+| |   | \-Ruminococcus bromii
+| |   \+Clostridiaceae
+| |     \-Clostridium perfringens
+| \-Bacilli
+|   ++Bacillales
+|   | \-Staphylococcus aureus subsp. aureus str. Newman
+|   \-Lactobacillales
+|     ++Lactobacillaceae
+|     | \-Lacticaseibacillus paracasei
+|     \-Streptococcaceae
+|       \-Streptococcus
+|         +-Streptococcus parasanguinis
+|         | \-Streptococcus parasanguinis ATCC 15912
+|         \-Streptococcus salivarius
+\+Bacteroidota
+  \-Bacteroidales
+    ++Odoribacteraceae
+    | \-Odoribacter splanchnicus DSM 20712
+    ++Prevotellaceae
+    | \-Segatella copri DSM 18205
+    +-Tannerellaceae
+    | \-Parabacteroides
+    |   +-Parabacteroides distasonis
+    |   | \-Parabacteroides distasonis ATCC 8503
+    |   \-Parabacteroides merdae
+    |     \-Parabacteroides merdae ATCC 43184
+    \-Bacteroidaceae
+      ++Phocaeicola
+      | \-Phocaeicola vulgatus ATCC 8482
+      \-Bacteroides
+        +-Bacteroides xylanisolvens
+        | \-Bacteroides xylanisolvens CL03T12C04
+        +-Bacteroides caccae
+        | \-Bacteroides caccae ATCC 43185
+        +-Bacteroides uniformis
+        | \-Bacteroides uniformis ATCC 8492
+        +-Bacteroides ovatus
+        | \-Bacteroides ovatus ATCC 8483
+        +-Bacteroides thetaiotaomicron
+        | \-Bacteroides thetaiotaomicron VPI-5482
+        \-Bacteroides fragilis
+          \-Bacteroides fragilis NCTC 9343
+-----------------------------------

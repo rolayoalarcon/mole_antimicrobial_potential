@@ -1,0 +1,73 @@
+(
+'Bilophila wadsworthia ATCC 49260':4,
+(
+'Escherichia coli ED1a':4,
+'Escherichia coli IAI1':4
+)'Escherichia coli':4,
+'Akkermansia muciniphila ATCC BAA-835':4,
+'Fusobacterium nucleatum subsp. nucleatum ATCC 25586':4,
+(
+(
+'Eggerthella lenta DSM 2243':4,
+'Collinsella aerofaciens ATCC 25986':4
+)Coriobacteriia:4,
+(
+'Bifidobacterium adolescentis ATCC 15703':4,
+'Bifidobacterium longum subsp. longum':4
+)Bifidobacterium:4
+)Actinomycetota:4,
+(
+'Veillonella parvula DSM 2008':4,
+'Thomasclavelia ramosa DSM 1402':4,
+(
+(
+'Agathobacter rectalis DSM 17629':4,
+'[Clostridium] saccharolyticum WM1':4,
+(
+'Roseburia hominis A2-183':4,
+'Roseburia intestinalis L1-82':4
+)Roseburia:4,
+'[Eubacterium] eligens ATCC 27750':4,
+'Coprococcus comes ATCC 27758':4,
+'Enterocloster bolteae ATCC BAA-613':4,
+'Dorea formicigenerans ATCC 27755':4,
+(
+'Mediterraneibacter gnavus ATCC 29149':4,
+'[Ruminococcus] torques ATCC 27756':4
+)Mediterraneibacter:4,
+'Blautia obeum ATCC 29174':4
+)Lachnospiraceae:4,
+'Clostridioides difficile 630':4,
+(
+'Ruminococcus bromii':4,
+'Clostridium perfringens':4
+)Eubacteriales:4
+)Clostridia:4,
+(
+'Lacticaseibacillus paracasei':4,
+(
+'Streptococcus parasanguinis ATCC 15912':4,
+'Streptococcus salivarius':4
+)Streptococcus:4
+)Lactobacillales:4
+)Bacillota:4,
+(
+'Odoribacter splanchnicus DSM 20712':4,
+'Segatella copri DSM 18205':4,
+(
+'Parabacteroides distasonis ATCC 8503':4,
+'Parabacteroides merdae ATCC 43184':4
+)Parabacteroides:4,
+(
+'Phocaeicola vulgatus ATCC 8482':4,
+(
+'Bacteroides xylanisolvens CL03T12C04':4,
+'Bacteroides caccae ATCC 43185':4,
+'Bacteroides uniformis ATCC 8492':4,
+'Bacteroides ovatus ATCC 8483':4,
+'Bacteroides thetaiotaomicron VPI-5482':4,
+'Bacteroides fragilis NCTC 9343':4
+)Bacteroides:4
+)Bacteroidaceae:4
+)Bacteroidales:4
+)Bacteria:4;

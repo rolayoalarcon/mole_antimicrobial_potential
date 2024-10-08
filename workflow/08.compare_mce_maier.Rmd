@@ -1,0 +1,152 @@
+---
+title: "08.compare_mce_maier"
+output: github_document
+date: "2024-10-02"
+---  
+  
+In this file we prepare the final figures from the data analysed in `08.compare_mce_maier.ipynb`. 
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(ggrepel)
+```
+
+## Prepare directories. 
+  
+```{r prep.dirs}
+
+OUTPUT_DIR <- "../data/08.compare_mce_maier/"
+
+```
+
+
+## Read data.  
+  
+Here we read the UMAP coordinates.  
+```{r read.data}
+
+# UMAP based on MolE representation
+mole.umap <- read_tsv(file.path(OUTPUT_DIR, "mole_joint_umap.tsv.gz"), 
+                      show_col_types = FALSE)
+
+# UMAP based on ECFP4 representation
+ecfp4.umap <- read_tsv(file.path(OUTPUT_DIR, "ecfp4_joint_umap.tsv.gz"), 
+                      show_col_types = FALSE)
+```
+
+## Plot UMAP. 
+
+Plot the UMAP, highlighting some chemicals that are predicted to be broad-spectrum and confirmed in the literature.
+
+```{r chems.interest}
+# Chemicals of interest
+
+coi_df <- data.frame("chem_id" = c("HY-B0183", "HY-B0021", "HY-N0829", "HY-B0723", "HY-B2136" ),
+                     "ProductName" = c("Ellagic acid", "Doxifluridine", "Shionone", "Ospemifene", "Tannic acid"))
+
+coi_df
+```
+
+
+ 
+```{r plot.umap.mole}
+
+coi.mole <- coi_df %>% 
+  left_join(mole.umap, by="chem_id")
+
+
+
+u.mole <- ggplot(mole.umap, aes(x=umap1, y=umap2, fill=`Chemical Library`)) +
+  geom_point(size=2, color="white", shape=21, alpha=0.75) +
+  
+  
+  geom_text_repel(data = coi.mole, aes(label=ProductName), 
+                  max.overlaps = Inf, size=3.5, min.segment.length = 0, 
+                  color="black", fontface="bold",
+                  box.padding = 0.5,
+                  nudge_x = if_else(coi.mole$ProductName %in% c("Ellagic acid", "Tannic acid", "Ospemifene"), 1, 0),
+                  nudge_y = if_else(coi.mole$ProductName %in% c("Ospemifene"), 3, 0)) +
+  
+  
+  scale_fill_manual(values=c("#DE1F84", "#C5C5C5")) +
+  
+  theme_bw() +
+  
+  theme(axis.ticks.x = element_blank(),
+        axis.text.x = element_blank(),
+        axis.ticks.y = element_blank(),
+        axis.text.y = element_blank(),
+        panel.background = element_rect(fill = "transparent", color=NA),
+      plot.background = element_rect(fill = "transparent", colour = NA))  + 
+  
+labs(x="UMAP 1",
+       y="UMAP 2")
+
+u.mole
+ggsave(filename = file.path(OUTPUT_DIR, "mole_joint_umap.pdf"), plot=u.mole, dpi = 300,
+       height = 13, width = 20, units="cm")
+  
+
+```
+
+
+The same but for ECFP4. 
+```{r plot.umap.fps}
+
+coi.ecfp4 <- coi_df %>% 
+  left_join(ecfp4.umap, by="chem_id")
+
+
+
+u.ecfp4 <- ggplot(ecfp4.umap, aes(x=umap1, y=umap2, fill=`Chemical Library`)) +
+  geom_point(size=1.5, color="white", shape=21, alpha=0.75) +
+  
+  
+  geom_text_repel(data = coi.ecfp4, aes(label=ProductName), 
+                  max.overlaps = Inf, size=3.5, min.segment.length = 0, 
+                  color="black", fontface="bold",
+                  box.padding = 0.5,
+                   nudge_y = if_else(coi.mole$ProductName %in% c("Ospemifene", "Tannic acid"), -5, 0),
+                  nudge_x = if_else(coi.mole$ProductName %in% c("Doxifluridine", "Ellagic acid"), -3, 0)) +
+  
+  
+  scale_fill_manual(values=c("#DE1F84", "#C5C5C5")) +
+  
+  theme_bw() +
+  
+  theme(axis.ticks.x = element_blank(),
+        axis.text.x = element_blank(),
+        axis.ticks.y = element_blank(),
+        axis.text.y = element_blank(),
+        panel.background = element_rect(fill = "transparent", color=NA),
+      plot.background = element_rect(fill = "transparent", colour = NA))  + 
+  
+labs(x="UMAP 1",
+       y="UMAP 2")
+
+u.ecfp4
+ggsave(filename = file.path(OUTPUT_DIR, "ecfp4_joint_umap.pdf"), plot=u.ecfp4, dpi = 300,
+       height = 13, width = 19, units="cm")
+  
+
+```
+
+## Comparing MolE and ECFP4
+
+```{r panel.lib}
+library(ggpubr)
+```
+
+
+```{r panel}
+
+umap.arranged <- ggarrange(u.mole + ggtitle("MolE"), 
+          u.ecfp4 + ggtitle("ECFP4"), 
+          common.legend = TRUE,
+          legend="bottom")
+
+umap.arranged
+ggsave(filename = file.path(OUTPUT_DIR, "joint_umap_panel.pdf"), plot=umap.arranged, dpi = 300,
+       height = 11, width = 20, units="cm")
+```
+

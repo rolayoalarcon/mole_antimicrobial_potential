@@ -97,7 +97,7 @@ validation_strains <- c("Escherichia coli CFT073",
 
 tip.use <- data.frame(Species=taxtree$tip.label) %>% 
   
-  mutate(strain_use = if_else(Species %in% validation_strains, "Validation", "Training")) %>% 
+  mutate(strain_use = if_else(Species %in% validation_strains, "Experimental validation", "Model training")) %>% 
   
   rename("label" = "Species")
 
@@ -132,23 +132,31 @@ tip.gram <- data.frame(Species=taxtree$tip.label) %>%
 Now we can plot the tree
 
 ```{r plot.tree}
-p.tree <- ggtree(taxtree, branch.length = "none") %<+% tip.use %<+% tip.gram +
-  geom_tippoint(aes(color=strain_use, shape=`Gram stain`)) +
-  geom_tiplab(size=2.8, offset = .1)+
-  hexpand(ratio=.15) +
-  vexpand(ratio = .0000001) +
-  xlim(-.1, 7) +
+p.tree <- ggtree(taxtree, branch.length = "none", layout = "circular", ladderize = FALSE) %<+% tip.use %<+% tip.gram +
+  geom_tippoint(aes(color=strain_use, shape=`Gram stain`), size=2) +
+  geom_tiplab(size=2.6, offset = .5, aes(angle=angle, color=strain_use))+
+  
+  scale_color_manual(values=c(`Model training` = "black", `Experimental validation`= "#e7298a")) +
+  scale_shape_manual(values=c(Negative=16, Positive=17)) +
+  
+  hexpand(ratio=1) +
+  vexpand(ratio = 1.5) +
+  xlim(-.1, 8) +
   labs(color="Strain usage")
+
 
 p.tree
 ```
 Save the tree
 
 ```{r save.tree}
-ggsave(plot=p.tree, filename = file.path(OUTPUT_DIR, "taxtree.pdf"),
-       dpi=300, width = 19, height = 18, units = "cm")
+ggsave(plot=p.tree, filename = file.path(OUTPUT_DIR, "taxtree_circle.pdf"),
+       dpi=300, width = 19, height = 15, units = "cm")
+
+ggsave(plot=p.tree, filename = file.path(OUTPUT_DIR, "taxtree_circle.png"),
+       dpi=300, width = 19, height = 15, units = "cm")
 ```
-  
+
   
 ## Read Optical Density. 
   

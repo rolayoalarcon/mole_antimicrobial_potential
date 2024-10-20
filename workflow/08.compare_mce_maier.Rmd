@@ -9,6 +9,7 @@ In this file we prepare the final figures from the data analysed in `08.compare_
 ```{r setup, include=FALSE}
 library(tidyverse)
 library(ggrepel)
+library(readxl)
 ```
 
 ## Prepare directories. 
@@ -32,8 +33,20 @@ mole.umap <- read_tsv(file.path(OUTPUT_DIR, "mole_joint_umap.tsv.gz"),
 # UMAP based on ECFP4 representation
 ecfp4.umap <- read_tsv(file.path(OUTPUT_DIR, "ecfp4_joint_umap.tsv.gz"), 
                       show_col_types = FALSE)
-```
 
+
+# Literature search data. 
+litsearch.mole <- read_excel("../data/04.new_predictions/mole_mce_predictions_litsearch.xlsx", sheet = "mole_over10")
+
+mce_litexamples <- litsearch.mole %>% 
+  filter(!is.na(`Reported Activity`),
+         antibiotic == "not_abx") %>% 
+  select(`Catalog Number`, `Reported Activity`) %>% 
+  rename("chem_id" = "Catalog Number")
+
+mce_litexamples %>% head()
+```
+  
 ## Plot UMAP. 
 
 Plot the UMAP, highlighting some chemicals that are predicted to be broad-spectrum and confirmed in the literature.
@@ -47,17 +60,29 @@ coi_df <- data.frame("chem_id" = c("HY-B0183", "HY-B0021", "HY-N0829", "HY-B0723
 coi_df
 ```
 
+```{r}
+
+mce_litexamples.umap <- mce_litexamples %>% 
+  left_join(mole.umap, by="chem_id") %>% 
+  mutate(`Chemical Library` = "MCE (Predictions with reported activity)")
+```
+
+
+```{r}
+coi.mole <- coi_df %>% 
+  left_join(mole.umap, by="chem_id")
+```
+
+
+
 
  
 ```{r plot.umap.mole}
 
-coi.mole <- coi_df %>% 
-  left_join(mole.umap, by="chem_id")
-
-
-
 u.mole <- ggplot(mole.umap, aes(x=umap1, y=umap2, fill=`Chemical Library`)) +
   geom_point(size=2, color="white", shape=21, alpha=0.75) +
+  
+  geom_point(data = mce_litexamples.umap, color="white", size=2.5, shape=21, alpha=0.75) +
   
   
   geom_text_repel(data = coi.mole, aes(label=ProductName), 
@@ -65,14 +90,19 @@ u.mole <- ggplot(mole.umap, aes(x=umap1, y=umap2, fill=`Chemical Library`)) +
                   color="black", fontface="bold",
                   box.padding = 0.5,
                   nudge_x = if_else(coi.mole$ProductName %in% c("Ellagic acid", "Tannic acid", "Ospemifene"), 1, 0),
-                  nudge_y = if_else(coi.mole$ProductName %in% c("Ospemifene"), 3, 0)) +
+                  
+                  nudge_y = case_when(coi.mole$ProductName %in% c("Ospemifene", "Shionone") ~ 3,
+                                      coi.mole$ProductName %in% c("Doxifluridine") ~ -2,
+                                      coi.mole$ProductName %in% c("Tannic acid") ~ 2,
+                                      TRUE ~ 0)) +
   
   
-  scale_fill_manual(values=c("#DE1F84", "#C5C5C5")) +
+  scale_fill_manual(values=c("#DE1F84", "#C5C5C5", "#1F9DBB")) +
   
   theme_bw() +
   
-  theme(axis.ticks.x = element_blank(),
+  theme(legend.position = "bottom",
+        axis.ticks.x = element_blank(),
         axis.text.x = element_blank(),
         axis.ticks.y = element_blank(),
         axis.text.y = element_blank(),
@@ -84,7 +114,10 @@ labs(x="UMAP 1",
 
 u.mole
 ggsave(filename = file.path(OUTPUT_DIR, "mole_joint_umap.pdf"), plot=u.mole, dpi = 300,
-       height = 13, width = 20, units="cm")
+       height = 15, width = 21, units="cm")
+
+ggsave(filename = file.path(OUTPUT_DIR, "mole_joint_umap.png"), plot=u.mole, dpi = 300,
+       height = 15, width = 21, units="cm")
   
 
 ```

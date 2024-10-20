@@ -921,10 +921,6 @@ venn.nonabx.comparison <- ggvenn(broad.list,
 venn.nonabx.comparison
 ```
 
-```{r}
-(13 + 24)*2
-```
-
 
 
 

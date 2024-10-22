@@ -7,3 +7,5 @@ mole_cover_letter.docx
 
 examples/input/hcs_molecules.tsv
 examples/output/hcs_molecules_mole.tsv.gz
+
+workflow/logdir/**

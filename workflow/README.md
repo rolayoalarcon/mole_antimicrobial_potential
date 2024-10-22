@@ -1,0 +1,13 @@
+# Workflow  
+  
+This directory contains the scripts and Notebooks used in order to produce the results found in our pre-print: [**Pre-trained molecular representations enable antimicrobial discovery**](https://www.biorxiv.org/content/10.1101/2024.03.11.584456v2).  
+
+Below is a brief description of what is done in each step.  
+    - `01.prepare_training_data.ipynb`: SMILES are obtained for the chemicals used in the study by [Maier, 2018](https://www.nature.com/articles/nature25979). Afterwards all molecular representations are gathered for compounds in the Maier, and MedChemExpress (MCE) libraries. Also, the ECFP4 and MolE representations are obtained for a random selection of molecules from PubChem.  
+    - `02.model_training.ipynb`: Here we train XGBoost models to predict antimicrobial activity of compounds using the data from [Maier, 2018](https://www.nature.com/articles/nature25979).  
+    - `03.model_evaluation.ipynb`: The results from `02.model_training.ipynb` are read and the best model for each molecular representation is gathered. Performance metrics and precision recall curves are calculated. Optimal thresholds for growth-inhibition prediction are also determined. Analysis of test-set predictions is also performed in this notebook. 
+    - `04.new_predictions.ipynb`: Predictions are made for compounds not present in the library used by [Maier, 2018](https://www.nature.com/articles/nature25979) using the models evaluated in `03.model_evaluation.ipynb`. Predictions for Halicin and Abaucin are made. Additionally, predictions of antimicrobial activity are made on molecules from the MedChemExpress library. Later on, a literature search is performed for molecules predicted to have broad-spectrum activity.  
+    - `05.analyze_mce_predictions.Rmd`: An exploration of the predictions made in `04.new_predictions.ipynb` is done. Results from the literature search, ranking of known antibiotics, and the molecules chosen for experimental validation are highlighted. Also, a comparison to the predictions made by a model using ECFP4 is also done.  
+    - `06.experimental_validation.Rmd`: Analysis of the results from the experimental validation of the chosen compounds. MIC curves, growth curves and growth paramters are performed.  
+    - `07.pubchem_exploration.ipynb`: Exploring the representation of a set of 100K randomly selected molecules from PubChem. Also, the most similar molecues to a given query, according to different representations is done.  
+    - `08.compare_mce_maier.ipynb`: A comparison of the chemical space of the Maier and MCE libraries is performed. 

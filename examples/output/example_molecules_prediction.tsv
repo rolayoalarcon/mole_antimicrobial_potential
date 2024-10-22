@@ -1,0 +1,281 @@
+pred_id	antimicrobial_predictive_probability	growth_inhibition
+Halicin:Akkermansia muciniphila (NT5021)	0.021192694	0
+Halicin:Bacteroides caccae (NT5050)	0.20044225	1
+Halicin:Bacteroides fragilis (ET) (NT5033)	0.13638856	1
+Halicin:Bacteroides fragilis (NT) (NT5003)	0.31997114	1
+Halicin:Bacteroides ovatus (NT5054)	0.18697909	1
+Halicin:Bacteroides thetaiotaomicron (NT5004)	0.13655038	1
+Halicin:Bacteroides uniformis (NT5002)	0.20608483	1
+Halicin:Bacteroides vulgatus (NT5001)	0.20358992	1
+Halicin:Bacteroides xylanisolvens (NT5064)	0.14571722	1
+Halicin:Bifidobacterium adolescentis (NT5022)	0.13033158	1
+Halicin:Bifidobacterium longum (NT5028)	0.062367305	1
+Halicin:Bilophila wadsworthia (NT5036)	0.12167165	1
+Halicin:Blautia obeum (NT5069)	0.94394296	1
+Halicin:Clostridium bolteae (NT5026)	0.37628254	1
+Halicin:Clostridium difficile (NT5083)	0.4770033	1
+Halicin:Clostridium perfringens (NT5032)	0.18091147	1
+Halicin:Clostridium ramosum (NT5006)	0.15356177	1
+Halicin:Clostridium saccharolyticum (NT5037)	0.10375723	1
+Halicin:Collinsella aerofaciens (NT5073)	0.5390059	1
+Halicin:Coprococcus comes (NT5048)	0.7449787	1
+Halicin:Dorea formicigenerans (NT5076)	0.37953573	1
+Halicin:Eggerthella lenta (NT5024)	0.4475104	1
+Halicin:Escherichia coli ED1a (NT5078)	0.042280074	0
+Halicin:Escherichia coli IAI1 (NT5077)	0.052755695	1
+Halicin:Eubacterium eligens (NT5075)	0.117745556	1
+Halicin:Eubacterium rectale (NT5009)	0.46077713	1
+Halicin:Fusobacterium nucleatum (NT5025)	0.22971949	1
+Halicin:Lactobacillus paracasei (NT5042)	0.0017916544	0
+Halicin:Odoribacter splanchnicus (NT5081)	0.18362293	1
+Halicin:Parabacteroides distasonis (NT5074)	0.07335632	1
+Halicin:Parabacteroides merdae (NT5071)	0.2151166	1
+Halicin:Prevotella copri (NT5019)	0.7571476	1
+Halicin:Roseburia hominis (NT5079)	0.15118462	1
+Halicin:Roseburia intestinalis (NT5011)	0.2040564	1
+Halicin:Ruminococcus bromii (NT5045)	0.28551665	1
+Halicin:Ruminococcus gnavus (NT5046)	0.19108754	1
+Halicin:Ruminococcus torques (NT5047)	0.15882453	1
+Halicin:Streptococcus parasanguinis (NT5072)	0.03342396	0
+Halicin:Streptococcus salivarius (NT5038)	0.016695198	0
+Halicin:Veillonella parvula (NT5017)	0.563656	1
+Abaucin:Akkermansia muciniphila (NT5021)	0.010850511	0
+Abaucin:Bacteroides caccae (NT5050)	0.00038989924	0
+Abaucin:Bacteroides fragilis (ET) (NT5033)	0.00023044848	0
+Abaucin:Bacteroides fragilis (NT) (NT5003)	0.00030910745	0
+Abaucin:Bacteroides ovatus (NT5054)	0.000280982	0
+Abaucin:Bacteroides thetaiotaomicron (NT5004)	9.858348e-05	0
+Abaucin:Bacteroides uniformis (NT5002)	0.0007654896	0
+Abaucin:Bacteroides vulgatus (NT5001)	0.0071923616	0
+Abaucin:Bacteroides xylanisolvens (NT5064)	0.00029069497	0
+Abaucin:Bifidobacterium adolescentis (NT5022)	3.6351506e-05	0
+Abaucin:Bifidobacterium longum (NT5028)	0.00011216595	0
+Abaucin:Bilophila wadsworthia (NT5036)	3.938553e-05	0
+Abaucin:Blautia obeum (NT5069)	0.00032133574	0
+Abaucin:Clostridium bolteae (NT5026)	2.8648043e-05	0
+Abaucin:Clostridium difficile (NT5083)	0.00065972086	0
+Abaucin:Clostridium perfringens (NT5032)	0.00070958113	0
+Abaucin:Clostridium ramosum (NT5006)	4.4322936e-05	0
+Abaucin:Clostridium saccharolyticum (NT5037)	0.00010885009	0
+Abaucin:Collinsella aerofaciens (NT5073)	0.0015292147	0
+Abaucin:Coprococcus comes (NT5048)	0.0008538641	0
+Abaucin:Dorea formicigenerans (NT5076)	0.0035672195	0
+Abaucin:Eggerthella lenta (NT5024)	9.539063e-05	0
+Abaucin:Escherichia coli ED1a (NT5078)	5.970977e-06	0
+Abaucin:Escherichia coli IAI1 (NT5077)	5.8771557e-06	0
+Abaucin:Eubacterium eligens (NT5075)	0.013760136	0
+Abaucin:Eubacterium rectale (NT5009)	0.33915454	1
+Abaucin:Fusobacterium nucleatum (NT5025)	1.4960365e-05	0
+Abaucin:Lactobacillus paracasei (NT5042)	0.00017087636	0
+Abaucin:Odoribacter splanchnicus (NT5081)	0.00082051085	0
+Abaucin:Parabacteroides distasonis (NT5074)	0.00075023563	0
+Abaucin:Parabacteroides merdae (NT5071)	0.00039613823	0
+Abaucin:Prevotella copri (NT5019)	0.0110927345	0
+Abaucin:Roseburia hominis (NT5079)	0.00043478797	0
+Abaucin:Roseburia intestinalis (NT5011)	0.003588201	0
+Abaucin:Ruminococcus bromii (NT5045)	0.00012148986	0
+Abaucin:Ruminococcus gnavus (NT5046)	0.015503465	0
+Abaucin:Ruminococcus torques (NT5047)	0.0009825114	0
+Abaucin:Streptococcus parasanguinis (NT5072)	0.000108795815	0
+Abaucin:Streptococcus salivarius (NT5038)	4.0851235e-05	0
+Abaucin:Veillonella parvula (NT5017)	0.004400194	0
+Diacerein:Akkermansia muciniphila (NT5021)	0.0001757883	0
+Diacerein:Bacteroides caccae (NT5050)	0.034484763	0
+Diacerein:Bacteroides fragilis (ET) (NT5033)	0.066885516	1
+Diacerein:Bacteroides fragilis (NT) (NT5003)	0.14541304	1
+Diacerein:Bacteroides ovatus (NT5054)	0.11931046	1
+Diacerein:Bacteroides thetaiotaomicron (NT5004)	0.007109153	0
+Diacerein:Bacteroides uniformis (NT5002)	0.40662926	1
+Diacerein:Bacteroides vulgatus (NT5001)	0.23167677	1
+Diacerein:Bacteroides xylanisolvens (NT5064)	0.011432466	0
+Diacerein:Bifidobacterium adolescentis (NT5022)	0.12636681	1
+Diacerein:Bifidobacterium longum (NT5028)	0.04140981	0
+Diacerein:Bilophila wadsworthia (NT5036)	0.0062568234	0
+Diacerein:Blautia obeum (NT5069)	0.7552189	1
+Diacerein:Clostridium bolteae (NT5026)	0.041443836	0
+Diacerein:Clostridium difficile (NT5083)	0.055041	1
+Diacerein:Clostridium perfringens (NT5032)	0.6998615	1
+Diacerein:Clostridium ramosum (NT5006)	0.19009423	1
+Diacerein:Clostridium saccharolyticum (NT5037)	0.58900285	1
+Diacerein:Collinsella aerofaciens (NT5073)	0.29219958	1
+Diacerein:Coprococcus comes (NT5048)	0.22785206	1
+Diacerein:Dorea formicigenerans (NT5076)	0.15644729	1
+Diacerein:Eggerthella lenta (NT5024)	0.058348306	1
+Diacerein:Escherichia coli ED1a (NT5078)	0.0033567266	0
+Diacerein:Escherichia coli IAI1 (NT5077)	0.0047837757	0
+Diacerein:Eubacterium eligens (NT5075)	0.034111314	0
+Diacerein:Eubacterium rectale (NT5009)	0.08874267	1
+Diacerein:Fusobacterium nucleatum (NT5025)	0.0411345	0
+Diacerein:Lactobacillus paracasei (NT5042)	0.009261046	0
+Diacerein:Odoribacter splanchnicus (NT5081)	0.41052592	1
+Diacerein:Parabacteroides distasonis (NT5074)	0.15630929	1
+Diacerein:Parabacteroides merdae (NT5071)	0.13332112	1
+Diacerein:Prevotella copri (NT5019)	0.18881576	1
+Diacerein:Roseburia hominis (NT5079)	0.048683044	1
+Diacerein:Roseburia intestinalis (NT5011)	0.16185236	1
+Diacerein:Ruminococcus bromii (NT5045)	0.48141986	1
+Diacerein:Ruminococcus gnavus (NT5046)	0.2017269	1
+Diacerein:Ruminococcus torques (NT5047)	0.03887557	0
+Diacerein:Streptococcus parasanguinis (NT5072)	0.31297174	1
+Diacerein:Streptococcus salivarius (NT5038)	0.32179672	1
+Diacerein:Veillonella parvula (NT5017)	0.0025768406	0
+Tannic acid:Akkermansia muciniphila (NT5021)	0.14810419	1
+Tannic acid:Bacteroides caccae (NT5050)	0.34634924	1
+Tannic acid:Bacteroides fragilis (ET) (NT5033)	0.41516623	1
+Tannic acid:Bacteroides fragilis (NT) (NT5003)	0.66925997	1
+Tannic acid:Bacteroides ovatus (NT5054)	0.6525264	1
+Tannic acid:Bacteroides thetaiotaomicron (NT5004)	0.6032843	1
+Tannic acid:Bacteroides uniformis (NT5002)	0.7926673	1
+Tannic acid:Bacteroides vulgatus (NT5001)	0.65930325	1
+Tannic acid:Bacteroides xylanisolvens (NT5064)	0.5150406	1
+Tannic acid:Bifidobacterium adolescentis (NT5022)	0.8262483	1
+Tannic acid:Bifidobacterium longum (NT5028)	0.87367266	1
+Tannic acid:Bilophila wadsworthia (NT5036)	0.37479854	1
+Tannic acid:Blautia obeum (NT5069)	0.96919596	1
+Tannic acid:Clostridium bolteae (NT5026)	0.6325356	1
+Tannic acid:Clostridium difficile (NT5083)	0.76485956	1
+Tannic acid:Clostridium perfringens (NT5032)	0.9400416	1
+Tannic acid:Clostridium ramosum (NT5006)	0.63179255	1
+Tannic acid:Clostridium saccharolyticum (NT5037)	0.9665654	1
+Tannic acid:Collinsella aerofaciens (NT5073)	0.931349	1
+Tannic acid:Coprococcus comes (NT5048)	0.81581396	1
+Tannic acid:Dorea formicigenerans (NT5076)	0.7600574	1
+Tannic acid:Eggerthella lenta (NT5024)	0.7122834	1
+Tannic acid:Escherichia coli ED1a (NT5078)	0.21520844	1
+Tannic acid:Escherichia coli IAI1 (NT5077)	0.3389818	1
+Tannic acid:Eubacterium eligens (NT5075)	0.6733014	1
+Tannic acid:Eubacterium rectale (NT5009)	0.7971731	1
+Tannic acid:Fusobacterium nucleatum (NT5025)	0.26971316	1
+Tannic acid:Lactobacillus paracasei (NT5042)	0.39337808	1
+Tannic acid:Odoribacter splanchnicus (NT5081)	0.6697774	1
+Tannic acid:Parabacteroides distasonis (NT5074)	0.35253143	1
+Tannic acid:Parabacteroides merdae (NT5071)	0.5900811	1
+Tannic acid:Prevotella copri (NT5019)	0.41827977	1
+Tannic acid:Roseburia hominis (NT5079)	0.8130829	1
+Tannic acid:Roseburia intestinalis (NT5011)	0.89299095	1
+Tannic acid:Ruminococcus bromii (NT5045)	0.7250628	1
+Tannic acid:Ruminococcus gnavus (NT5046)	0.92325926	1
+Tannic acid:Ruminococcus torques (NT5047)	0.74494725	1
+Tannic acid:Streptococcus parasanguinis (NT5072)	0.84914875	1
+Tannic acid:Streptococcus salivarius (NT5038)	0.9259082	1
+Tannic acid:Veillonella parvula (NT5017)	0.086976565	1
+Elivitegravir:Akkermansia muciniphila (NT5021)	5.8446727e-05	0
+Elivitegravir:Bacteroides caccae (NT5050)	0.004024018	0
+Elivitegravir:Bacteroides fragilis (ET) (NT5033)	0.009454331	0
+Elivitegravir:Bacteroides fragilis (NT) (NT5003)	0.07524494	1
+Elivitegravir:Bacteroides ovatus (NT5054)	0.02342812	0
+Elivitegravir:Bacteroides thetaiotaomicron (NT5004)	0.027894063	0
+Elivitegravir:Bacteroides uniformis (NT5002)	0.07392661	1
+Elivitegravir:Bacteroides vulgatus (NT5001)	0.020527622	0
+Elivitegravir:Bacteroides xylanisolvens (NT5064)	0.012061624	0
+Elivitegravir:Bifidobacterium adolescentis (NT5022)	0.005327784	0
+Elivitegravir:Bifidobacterium longum (NT5028)	0.0011185277	0
+Elivitegravir:Bilophila wadsworthia (NT5036)	0.0008454524	0
+Elivitegravir:Blautia obeum (NT5069)	0.054522105	1
+Elivitegravir:Clostridium bolteae (NT5026)	0.09205812	1
+Elivitegravir:Clostridium difficile (NT5083)	0.09685929	1
+Elivitegravir:Clostridium perfringens (NT5032)	0.29570484	1
+Elivitegravir:Clostridium ramosum (NT5006)	0.0046937144	0
+Elivitegravir:Clostridium saccharolyticum (NT5037)	0.11016344	1
+Elivitegravir:Collinsella aerofaciens (NT5073)	0.009054883	0
+Elivitegravir:Coprococcus comes (NT5048)	0.038549088	0
+Elivitegravir:Dorea formicigenerans (NT5076)	0.01567359	0
+Elivitegravir:Eggerthella lenta (NT5024)	0.011971686	0
+Elivitegravir:Escherichia coli ED1a (NT5078)	0.0018640948	0
+Elivitegravir:Escherichia coli IAI1 (NT5077)	0.010240566	0
+Elivitegravir:Eubacterium eligens (NT5075)	0.0023924252	0
+Elivitegravir:Eubacterium rectale (NT5009)	0.0028245621	0
+Elivitegravir:Fusobacterium nucleatum (NT5025)	0.0060556624	0
+Elivitegravir:Lactobacillus paracasei (NT5042)	0.0016452662	0
+Elivitegravir:Odoribacter splanchnicus (NT5081)	0.03233667	0
+Elivitegravir:Parabacteroides distasonis (NT5074)	0.023003478	0
+Elivitegravir:Parabacteroides merdae (NT5071)	0.04894803	1
+Elivitegravir:Prevotella copri (NT5019)	0.012350069	0
+Elivitegravir:Roseburia hominis (NT5079)	0.008158533	0
+Elivitegravir:Roseburia intestinalis (NT5011)	0.011531965	0
+Elivitegravir:Ruminococcus bromii (NT5045)	0.004448215	0
+Elivitegravir:Ruminococcus gnavus (NT5046)	0.11191584	1
+Elivitegravir:Ruminococcus torques (NT5047)	0.006035722	0
+Elivitegravir:Streptococcus parasanguinis (NT5072)	0.009026922	0
+Elivitegravir:Streptococcus salivarius (NT5038)	0.025662545	0
+Elivitegravir:Veillonella parvula (NT5017)	0.005520873	0
+Opicapone:Akkermansia muciniphila (NT5021)	0.032993417	0
+Opicapone:Bacteroides caccae (NT5050)	0.10987621	1
+Opicapone:Bacteroides fragilis (ET) (NT5033)	0.2369922	1
+Opicapone:Bacteroides fragilis (NT) (NT5003)	0.13111702	1
+Opicapone:Bacteroides ovatus (NT5054)	0.31252778	1
+Opicapone:Bacteroides thetaiotaomicron (NT5004)	0.165412	1
+Opicapone:Bacteroides uniformis (NT5002)	0.4860035	1
+Opicapone:Bacteroides vulgatus (NT5001)	0.44147408	1
+Opicapone:Bacteroides xylanisolvens (NT5064)	0.19198574	1
+Opicapone:Bifidobacterium adolescentis (NT5022)	0.28456986	1
+Opicapone:Bifidobacterium longum (NT5028)	0.16195852	1
+Opicapone:Bilophila wadsworthia (NT5036)	0.008738157	0
+Opicapone:Blautia obeum (NT5069)	0.6657802	1
+Opicapone:Clostridium bolteae (NT5026)	0.78267753	1
+Opicapone:Clostridium difficile (NT5083)	0.1685511	1
+Opicapone:Clostridium perfringens (NT5032)	0.5146731	1
+Opicapone:Clostridium ramosum (NT5006)	0.3225787	1
+Opicapone:Clostridium saccharolyticum (NT5037)	0.43571606	1
+Opicapone:Collinsella aerofaciens (NT5073)	0.7105377	1
+Opicapone:Coprococcus comes (NT5048)	0.7458837	1
+Opicapone:Dorea formicigenerans (NT5076)	0.45358396	1
+Opicapone:Eggerthella lenta (NT5024)	0.38386127	1
+Opicapone:Escherichia coli ED1a (NT5078)	0.067430764	1
+Opicapone:Escherichia coli IAI1 (NT5077)	0.06652998	1
+Opicapone:Eubacterium eligens (NT5075)	0.07716452	1
+Opicapone:Eubacterium rectale (NT5009)	0.28869063	1
+Opicapone:Fusobacterium nucleatum (NT5025)	0.35200208	1
+Opicapone:Lactobacillus paracasei (NT5042)	0.063119516	1
+Opicapone:Odoribacter splanchnicus (NT5081)	0.47822452	1
+Opicapone:Parabacteroides distasonis (NT5074)	0.080828734	1
+Opicapone:Parabacteroides merdae (NT5071)	0.2802487	1
+Opicapone:Prevotella copri (NT5019)	0.47112322	1
+Opicapone:Roseburia hominis (NT5079)	0.13968675	1
+Opicapone:Roseburia intestinalis (NT5011)	0.35331023	1
+Opicapone:Ruminococcus bromii (NT5045)	0.5439629	1
+Opicapone:Ruminococcus gnavus (NT5046)	0.43295488	1
+Opicapone:Ruminococcus torques (NT5047)	0.66646415	1
+Opicapone:Streptococcus parasanguinis (NT5072)	0.27494666	1
+Opicapone:Streptococcus salivarius (NT5038)	0.18450841	1
+Opicapone:Veillonella parvula (NT5017)	0.023915736	0
+Ebastine:Akkermansia muciniphila (NT5021)	0.00031498045	0
+Ebastine:Bacteroides caccae (NT5050)	0.003566333	0
+Ebastine:Bacteroides fragilis (ET) (NT5033)	0.00742425	0
+Ebastine:Bacteroides fragilis (NT) (NT5003)	0.1359192	1
+Ebastine:Bacteroides ovatus (NT5054)	0.004271365	0
+Ebastine:Bacteroides thetaiotaomicron (NT5004)	0.104025334	1
+Ebastine:Bacteroides uniformis (NT5002)	0.4465444	1
+Ebastine:Bacteroides vulgatus (NT5001)	0.7600128	1
+Ebastine:Bacteroides xylanisolvens (NT5064)	0.0011378429	0
+Ebastine:Bifidobacterium adolescentis (NT5022)	0.00334617	0
+Ebastine:Bifidobacterium longum (NT5028)	0.056501295	1
+Ebastine:Bilophila wadsworthia (NT5036)	1.4142631e-05	0
+Ebastine:Blautia obeum (NT5069)	0.3663111	1
+Ebastine:Clostridium bolteae (NT5026)	0.0008343482	0
+Ebastine:Clostridium difficile (NT5083)	0.19612336	1
+Ebastine:Clostridium perfringens (NT5032)	0.096803926	1
+Ebastine:Clostridium ramosum (NT5006)	0.0003824933	0
+Ebastine:Clostridium saccharolyticum (NT5037)	0.014379254	0
+Ebastine:Collinsella aerofaciens (NT5073)	0.3467002	1
+Ebastine:Coprococcus comes (NT5048)	0.765561	1
+Ebastine:Dorea formicigenerans (NT5076)	0.205408	1
+Ebastine:Eggerthella lenta (NT5024)	0.003495731	0
+Ebastine:Escherichia coli ED1a (NT5078)	3.0873045e-05	0
+Ebastine:Escherichia coli IAI1 (NT5077)	0.0008036033	0
+Ebastine:Eubacterium eligens (NT5075)	0.796516	1
+Ebastine:Eubacterium rectale (NT5009)	0.4396225	1
+Ebastine:Fusobacterium nucleatum (NT5025)	0.00011426591	0
+Ebastine:Lactobacillus paracasei (NT5042)	0.0030341202	0
+Ebastine:Odoribacter splanchnicus (NT5081)	0.03883654	0
+Ebastine:Parabacteroides distasonis (NT5074)	0.40334934	1
+Ebastine:Parabacteroides merdae (NT5071)	0.7011329	1
+Ebastine:Prevotella copri (NT5019)	0.55723816	1
+Ebastine:Roseburia hominis (NT5079)	0.036915984	0
+Ebastine:Roseburia intestinalis (NT5011)	0.90347576	1
+Ebastine:Ruminococcus bromii (NT5045)	0.0035839789	0
+Ebastine:Ruminococcus gnavus (NT5046)	0.92736363	1
+Ebastine:Ruminococcus torques (NT5047)	0.7472573	1
+Ebastine:Streptococcus parasanguinis (NT5072)	0.0016125975	0
+Ebastine:Streptococcus salivarius (NT5038)	0.0077896933	0
+Ebastine:Veillonella parvula (NT5017)	0.06644204	1

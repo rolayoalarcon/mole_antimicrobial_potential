@@ -26,12 +26,13 @@ def parse_arguments():
     """
 
     # Instantiate parser
-    parser = argparse.ArgumentParser(prog="Represent molecular structures as SMILES.",
+    parser = argparse.ArgumentParser(prog="Represent molecular structures as using MolE.",
                                      description="This program recieves a file with SMILES and represents them using the MolE representation.",
-                                     usage="python mole_representation.py smiles_filepath output_filepath [options]")
+                                     usage="python mole_representation.py smiles_filepath output_filepath [options]",
+                                     formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     
     # Input SMILES
-    parser.add_argument("smiles_filepath", help="Complete path to the smiles filepath.")
+    parser.add_argument("smiles_filepath", help="Complete path to the smiles filepath. Expects a TSV file with a column containing SMILES strings.")
 
     # Output filepath
     parser.add_argument("output_filepath", help="Complete path for the output.")
@@ -45,7 +46,7 @@ def parse_arguments():
                         default="chem_id")
     
     # MolE model
-    parser.add_argument("-m", "--mole_model", help="Path to the directory containing the config.yaml and model.pth files of the pre-trained MolE chemical representation. Default set to: mole_pretrained/model_ginconcat_btwin_100k_d8000_l0.0001",
+    parser.add_argument("-m", "--mole_model", help="Path to the directory containing the config.yaml and model.pth files of the pre-trained MolE chemical representation.",
                         default="pretrained_model/model_ginconcat_btwin_100k_d8000_l0.0001")
     
     # Device

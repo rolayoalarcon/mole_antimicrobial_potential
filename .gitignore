@@ -43,6 +43,7 @@ data/08.compare_mce_maier/similarity_to_maier.pdf
 data/08.compare_mce_maier/ecfp4_distance_to_maier.tsv.gz
 
 data/Supplementary\ Source\ Data/**
+data/Source\ Data/**
 
 data/test_output/**
 raw_data/maier_microbiome/commontree_wPath.txt

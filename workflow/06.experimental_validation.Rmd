@@ -961,7 +961,7 @@ average_od <- function(df){
 }
 
 dose_growth <- function(od_at_h, all_info=complete_od, 
-                        exclude_water = TRUE){
+                        exclude_water = TRUE, return_all_od = FALSE){
   
   #' Calculate dose-response growth curves based on optical density measurements.
   #'
@@ -984,6 +984,10 @@ dose_growth <- function(od_at_h, all_info=complete_od,
   
   # Gather od at the time of interest
   od_interest <- gather_od(info_strainrep, od_at_h)
+  
+  if(return_all_od){
+    return(od_interest)
+  }
   
   # Gather the average response at tp
   od_averages <- average_od(od_interest)
@@ -1047,6 +1051,16 @@ dose_reponse_10.p
 ```
 
 
+```{r}
+dose_response_10_complete <- dose_growth(10, return_all_od = TRUE)
+
+dose_response_10_complete %>% 
+  select(compound, concentration, organism, well, replicate, od, time_spent_h, curve_id) %>% 
+  arrange(compound, concentration, organism) %>% 
+  
+  write_tsv(file.path(OUTPUT_DIR, "MIC_10h.tsv"))
+```
+
 
 ## Specific growth curves. 
   
@@ -1093,6 +1107,21 @@ sa_ebastine_od
 ```
 
 
+
+
+```{r}
+ebas_od %>% 
+  select(-timepoint) %>% 
+  filter(chem_conc %in% c("Ebastine_16","DMSO_0.64", "Water_0"),
+         str_detect(well, "^[HGD]")) %>% 
+  select(compound, concentration, organism, well, replicate, time_spent_h, od, dmso_percentage, curve_id) %>% 
+  arrange(compound) %>% 
+  
+  write_tsv(file.path(OUTPUT_DIR, "ebastine_od.tsv"))
+```
+
+
+
   
 ### Opicapone. 
   
@@ -1131,6 +1160,15 @@ sa_opicapone_od <- ggplot() +
 
 sa_opicapone_od
 ```
+
+```{r}
+opi_od %>% 
+  select(compound, concentration, organism, well, replicate, time_spent_h, od, dmso_percentage, curve_id) %>% 
+  arrange(compound) %>% 
+  
+  write_tsv(file.path(OUTPUT_DIR, "opicapone_od.tsv"))
+```
+
   
 ### Cetrorelix 
   
@@ -1599,6 +1637,24 @@ ggsave(plot=lagphase.bp, filename = file.path(GPARAM_OUTPUT_DIR, paste0(compound
 ggsave(plot=statphase.bp, filename = file.path(GPARAM_OUTPUT_DIR, paste0(compound_n, "_stationaryPhase.pdf")), width = 21, height = 25, units = "cm")
 ggsave(plot=gentime.bp, filename = file.path(GPARAM_OUTPUT_DIR, paste0(compound_n, "_genTime.pdf")), width = 21, height = 25, units = "cm")
 ```
+
+
+
+```{r}
+ebas.data <- compound.params %>% 
+  filter(organism == "SA", 
+         chem_conc == "16") %>% 
+  
+  select(organism, compound, concentration, dmso_percentage, well, replicate, startPoint_x, reachMaximum_x, maximum_y, generation_time) %>% 
+  arrange(desc(compound)) %>% 
+  
+  rename("dmso concentration" = "dmso_percentage",
+         "Time of end of lag Phase (h)" = "startPoint_x",
+         "Time of start of stationary phase (h)" = "reachMaximum_x",
+         "Maximum growth" = "maximum_y",
+          "Doubling time (h)" = "generation_time")
+```
+
   
   
 
@@ -1779,6 +1835,25 @@ ggsave(plot=lagphase.bp, filename = file.path(GPARAM_OUTPUT_DIR, paste0(compound
 ggsave(plot=statphase.bp, filename = file.path(GPARAM_OUTPUT_DIR, paste0(compound_n, "_stationaryPhase.pdf")), width = 21, height = 25, units = "cm")
 ggsave(plot=gentime.bp, filename = file.path(GPARAM_OUTPUT_DIR, paste0(compound_n, "_genTime.pdf")), width = 21, height = 25, units = "cm")
 ```
+
+
+
+
+```{r}
+opi.data <- compound.params %>% 
+  filter(organism == "SA", 
+         chem_conc == "16") %>% 
+  
+  select(organism, compound, concentration, dmso_percentage, well, replicate, startPoint_x, reachMaximum_x, maximum_y, generation_time) %>% 
+  arrange(desc(compound)) %>% 
+  
+  rename("dmso concentration" = "dmso_percentage",
+         "Time of end of lag Phase (h)" = "startPoint_x",
+         "Time of start of stationary phase (h)" = "reachMaximum_x",
+         "Maximum growth" = "maximum_y",
+          "Doubling time (h)" = "generation_time")
+```
+
 
  
 ```{r lag.phase.opicapone}
@@ -2091,6 +2166,30 @@ ggsave(plot=gentime.bp, filename = file.path(GPARAM_OUTPUT_DIR, paste0(compound_
 write_tsv(growth.params, file.path(OUTPUT_DIR, "growth_parameters.tsv.gz"))
 
 ```
+
+```{r eval=FALSE, include=FALSE}
+library(xlsx)
+```
+
+
+```{r eval=FALSE, include=FALSE}
+
+write.xlsx2(ebas.data, "../data/Supplementary Source Data/Supplementary Figure 12.xlsx",
+            sheetName = "SF12",
+            col.names = TRUE,
+            row.names = TRUE,
+            append = FALSE)
+
+
+write.xlsx2(opi.data, "../data/Supplementary Source Data/Supplementary Figure 11.xlsx",
+            sheetName = "SF11",
+            col.names = TRUE,
+            row.names = TRUE,
+            append = FALSE)
+
+```
+
+
 
 
 ## Session Information

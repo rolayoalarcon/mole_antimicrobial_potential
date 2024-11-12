@@ -310,7 +310,7 @@ ecfp4_prepared %>% dim()
   
 ```{r mole.umap}
 
-set.seed(1234)
+set.seed(42)
 mole.umap <- umap(X=mole_prepared,
                  n_neighbors = 25,
                  n_components = 2,
@@ -449,8 +449,23 @@ m.umap.over10.annot <- ggplot(mole.umap, aes(x=V1, y=V2)) +
 
 m.umap.over10.annot
 ```
-
   
+```{r}
+meta_info <- mole_predictions %>% 
+  select(`Catalog Number`, nk_total, ProductName) %>% 
+  rename("catalog_number" = "Catalog Number")
+
+mole.umap %>% 
+  left_join(meta_info, by="catalog_number") %>% 
+  rename("umap1" = "V1",
+         "umap2" = "V2",
+         "pred_n_inhibited_total" = "nk_total") %>% 
+  
+  write_tsv("../data/05.analyze_mce_predictions/umap_mce_predictions.tsv")
+
+```
+
+
     
 ```{r ecfp4.umap.over10}
   
@@ -465,7 +480,8 @@ e.umap.over10 <- ggplot(ecfp4.umap, aes(x=V1, y=V2)) +
   geom_point(data=subset(ecfp4.umap, pred_activity == "Not Antimicrobial"), aes(color="Not Antimicrobial"), size=1.5) +
   geom_point(data=subset(ecfp4.umap, pred_activity == "Antimicrobial"), aes(color="Antimicrobial"), size=1.5) +
   
-  scale_color_manual(values=c("Antimicrobial" = alpha("#DE1F84", 0.7), "Not Antimicrobial" = alpha("#C5C5C5", 0.7))) +
+  scale_color_manual(values=c("Antimicrobial" = alpha("#DE1F84", 0.7), "Not Antimicrobial" = alpha("#C5C5C5", 0.7)),
+                     labels=c("Broad Spectrum", "Not Broad Spectrum")) +
   
   theme_void() +
   #coord_fixed(ratio = 0.4) +
@@ -503,7 +519,8 @@ e.umap.over10.annot <- ggplot(ecfp4.umap, aes(x=V1, y=V2)) +
   geom_text_repel(data = chems_interest_umap, aes(label=ProductName), 
                   max.overlaps = Inf, size=2, min.segment.length = 0, color="black", box.padding = 0.7, point.padding = 0.2, fontface="bold") +
   
-  scale_color_manual(values=c("Antimicrobial" = alpha("#DE1F84", 0.7), "Not Antimicrobial" = alpha("#C5C5C5", 0.7))) +
+  scale_color_manual(values=c("Antimicrobial" = alpha("#DE1F84", 0.7), "Not Antimicrobial" = alpha("#C5C5C5", 0.7)),
+                     labels=c("Broad Spectrum", "Not Broad Spectrum")) +
   
   theme_void() +
   #coord_fixed(ratio = 0.4) +
@@ -526,6 +543,22 @@ ggsave(plot=e.umap.over10.annot,
        filename = "../data/05.analyze_mce_predictions/ecfp4_mce_umap.pdf", 
        width = 21, height = 15, units="cm", dpi=300)
 ```
+
+
+```{r}
+meta_info <- ecfp4_predictions %>% 
+  select(`Catalog Number`, nk_total, ProductName) %>% 
+  rename("catalog_number" = "Catalog Number")
+
+ecfp4.umap %>% 
+  left_join(meta_info, by="catalog_number") %>% 
+  rename("umap1" = "V1",
+         "umap2" = "V2",
+         "pred_n_inhibited_total" = "nk_total") %>% 
+  
+  write_tsv("../data/05.analyze_mce_predictions/umap_mce_predictions_ecfp4.tsv")
+```
+
 
 
 ## Ranking molecule predictions. 
@@ -888,11 +921,6 @@ Comparing predicted broad spectrum compounds.
 library(ggvenn)
 ```
 
-  
-```{r}
-mole_predictions.over10
-```
-
 
 ```{r broad.spec.venn}
 fsize <- 3.5
@@ -1127,6 +1155,7 @@ nk.comparison <- ggplot(broadS.comp, aes(x=mole_nk_total, y=ecfp4_nk_total, colo
 nk.comparison
 
 ```
+  
 
 ## Figure panels. 
 
@@ -1182,8 +1211,6 @@ mole_predranks <- mole_predictions %>%
 complete_predranks <- bind_rows(ecfp4_predranks, mole_predranks)
 ```
 
-
-
 ```{r known.abx.hist}
 nk.abx.hist <- complete_predranks %>% 
   filter(antibiotic == "abx") %>% 
@@ -1231,8 +1258,8 @@ mole.comppreds <- complete_predranks %>%
 
 complete_litsearch_comparison <- bind_rows(ecfp4.comppreds, mole.comppreds)
 
-
 ```
+
 
 
 ```{r litsearch.hist.nk}
@@ -1305,6 +1332,180 @@ ggsave(plot = complete.comp.panel,
 
 complete.comp.panel
 ```
+
+
+## Supplementary Files. 
+    
+    
+### SF8
+
+```{r, eval=FALSE, include=FALSE}
+
+sf8a <- complete_predranks_wide_abx <- complete_predranks %>% 
+  filter(antibiotic=="abx") %>% 
+  pivot_wider(id_cols = c(`Catalog Number`, ProductName, antibiotic), names_from = representation, values_from = nk_total) %>% 
+  
+  rename("ECFP4_predicted_n_inhibited_strains" = "ECFP4",
+         "MolE_predicted_n_inhibited_strains" = "MolE")
+
+
+sf8bd <- broadS.comp %>% 
+  mutate(antibiotic="not_abx") %>% 
+  select(`Catalog Number`, ProductName, antibiotic, `Reported Activity`, mole_nk_total, ecfp4_nk_total) %>% 
+  rename("ECFP4_predicted_n_inhibited_strains" = "ecfp4_nk_total",
+         "MolE_predicted_n_inhibited_strains" = "mole_nk_total")
+
+sf8c <- proportion.comparison %>% 
+  pivot_wider(id_cols = `Reported Activity`, names_from = representation, values_from = n)
+
+
+```
+
+```{r, eval=FALSE, include=FALSE}
+library(xlsx)
+```
+
+
+```{r, eval=FALSE, include=FALSE}
+write.xlsx2(sf8a, "../data/Supplementary Source Data/Supplementary Figure 8.xlsx",
+           sheetName = "SF8a",
+           col.names = TRUE, 
+           row.names = TRUE, 
+           append = FALSE,
+           showNA = FALSE)
+
+write.xlsx2(sf8bd, "../data/Supplementary Source Data/Supplementary Figure 8.xlsx",
+           sheetName = "SF8b,d",
+           col.names = TRUE, 
+           row.names = TRUE, 
+           append = TRUE,
+           showNA = FALSE)
+
+write.xlsx2(sf8c, "../data/Supplementary Source Data/Supplementary Figure 8.xlsx",
+           sheetName = "SF8c",
+           col.names = TRUE, 
+           row.names = TRUE, 
+           append = TRUE,
+           showNA = FALSE)
+```
+
+### SF13
+
+```{r}
+# Names
+chem_names <- read_tsv("../data/04.new_predictions/medchemexpress_filtered.tsv.gz", show_col_types = FALSE)
+
+# MolE scores
+mole_scores <- read_excel("../data/04.new_predictions/mole_mce_predictions_litsearch.xlsx", sheet = "mole_scores") %>% 
+  pivot_longer(cols = -chem_id, names_to = "strain", values_to = "MolE_predictive_probability") %>% 
+  
+  unite("pred_id", c(chem_id, strain), sep=":", remove=FALSE)
+
+# ECFP4 scores
+ecfp4_scores <- read_excel("../data/04.new_predictions/ecfp4_mce_predictions_litsearch.xlsx", sheet = "ecfp4_scores") %>% 
+  pivot_longer(cols = -chem_id, names_to = "strain", values_to = "ECFP4_predictive_probability") %>% 
+  unite("pred_id", c(chem_id, strain), sep=":")
+
+# ChemDesc scores
+chemDesc_scores <- read_excel("../../udl_microbiome/data/chemDesc_mce_predictions.xlsx", sheet = "chemDesc_scores") %>% 
+  pivot_longer(cols = -chem_id, names_to = "strain", values_to = "chemDesc_predictive_probability") %>% 
+  unite("pred_id", c(chem_id, strain), sep=":")
+
+
+# Optimal thresholds
+optimal_thresholds <- read_tsv("../data/03.model_evaluation/optimal_thresholds.tsv.gz", show_col_types = FALSE) %>% 
+  filter(score_type == "optimized") %>% 
+  select(representation, threshold)
+
+
+
+```
+
+
+```{r}
+optimal_thresholds
+```
+
+
+
+```{r}
+selected.predictions <- chem_names %>% 
+  filter(ProductName %in% c("Ebastine", "Elvitegravir", "Visomitin", "Opicapone", "Thymidine", "Cetrorelix (Acetate)")) %>% 
+  select(`Catalog Number`, ProductName) %>% 
+  rename("chem_id" = "Catalog Number") %>% 
+  
+  left_join(mole_scores, by="chem_id") %>% 
+  left_join(ecfp4_scores, by="pred_id") %>% 
+  left_join(chemDesc_scores, by="pred_id") %>% 
+  
+  mutate("MolE_optimal_threshold" = optimal_thresholds %>% filter(representation == "MolE") %>% select(threshold) %>% unlist(),
+         "ECPF4_optimal_threshold" = optimal_thresholds %>% filter(representation == "ecfp4") %>% select(threshold) %>% unlist(),
+         "chemDesc_optimal_threshold" = optimal_thresholds %>% filter(representation == "chemDesc") %>% select(threshold) %>% unlist(),
+         
+         
+         "MolE_predicted_growth_inhibition" = if_else(MolE_predictive_probability >= MolE_optimal_threshold, 1, 0),
+         "ECFP4_predicted_growth_inhibition" = if_else(ECFP4_predictive_probability >= ECPF4_optimal_threshold, 1, 0),
+         "chemDesc_predicted_growth_inhibition" = if_else(chemDesc_predictive_probability >= chemDesc_optimal_threshold, 1, 0)) %>% 
+    
+    select(-pred_id)
+```
+
+```{r}
+write.xlsx2(selected.predictions %>% filter(ProductName == "Cetrorelix (Acetate)"), 
+            "../data/Supplementary Source Data/Supplementary Figure 13.xlsx",
+           sheetName = "SF13a",
+           col.names = TRUE, 
+           row.names = TRUE, 
+           append = FALSE,
+           showNA = TRUE)
+
+write.xlsx2(selected.predictions %>% filter(ProductName == "Ebastine"), 
+            "../data/Supplementary Source Data/Supplementary Figure 13.xlsx",
+           sheetName = "SF13b",
+           col.names = TRUE, 
+           row.names = TRUE, 
+           append = TRUE,
+           showNA = FALSE)
+
+write.xlsx2(selected.predictions %>% filter(ProductName == "Elvitegravir"), 
+            "../data/Supplementary Source Data/Supplementary Figure 13.xlsx",
+           sheetName = "SF13c",
+           col.names = TRUE, 
+           row.names = TRUE, 
+           append = TRUE,
+           showNA = FALSE)
+
+write.xlsx2(selected.predictions %>% filter(ProductName == "Opicapone"), 
+            "../data/Supplementary Source Data/Supplementary Figure 13.xlsx",
+           sheetName = "SF13d",
+           col.names = TRUE, 
+           row.names = TRUE, 
+           append = TRUE,
+           showNA = FALSE)
+
+
+write.xlsx2(selected.predictions %>% filter(ProductName == "Thymidine"), 
+            "../data/Supplementary Source Data/Supplementary Figure 13.xlsx",
+           sheetName = "SF13e",
+           col.names = TRUE, 
+           row.names = TRUE, 
+           append = TRUE,
+           showNA = FALSE)
+
+write.xlsx2(selected.predictions %>% filter(ProductName == "Visomitin"), 
+            "../data/Supplementary Source Data/Supplementary Figure 13.xlsx",
+           sheetName = "SF13f",
+           col.names = TRUE, 
+           row.names = TRUE, 
+           append = TRUE,
+           showNA = FALSE)
+```
+
+
+```{r}
+selected.predictions 
+```
+
 
   
 ## Session Info

@@ -35,6 +35,9 @@ ecfp4.umap <- read_tsv(file.path(OUTPUT_DIR, "ecfp4_joint_umap.tsv.gz"),
                       show_col_types = FALSE)
 
 
+# Complete prediction set
+completepreds <- read_excel("../data/04.new_predictions/mole_mce_predictions_litsearch.xlsx", sheet = "mole_prediction_overview")
+
 # Literature search data. 
 litsearch.mole <- read_excel("../data/04.new_predictions/mole_mce_predictions_litsearch.xlsx", sheet = "mole_over10")
 
@@ -72,22 +75,26 @@ mce_litexamples.umap <- mce_litexamples %>%
 coi.mole <- coi_df %>% 
   left_join(mole.umap, by="chem_id")
 ```
-
-
-
-
  
 ```{r plot.umap.mole}
+mole.umap <- mole.umap %>% 
+  mutate(keep = case_when(`Chemical Library` == "Maier et.al." ~ TRUE,
+                          `Chemical Library` == "MCE" & chem_id %in% completepreds$`Catalog Number` ~ TRUE,
+                          TRUE ~ FALSE)) %>% 
+  filter(keep)
+
+
 
 u.mole <- ggplot(mole.umap, aes(x=umap1, y=umap2, fill=`Chemical Library`)) +
-  geom_point(size=2, color="white", shape=21, alpha=0.75) +
   
+  
+  geom_point(size=2, color="white", shape=21, alpha=0.75) +
   geom_point(data = mce_litexamples.umap, color="white", size=2.5, shape=21, alpha=0.75) +
   
   
   geom_text_repel(data = coi.mole, aes(label=ProductName), 
-                  max.overlaps = Inf, size=3.5, min.segment.length = 0, 
-                  color="black", fontface="bold",
+                  max.overlaps = Inf, size=3, min.segment.length = 0, 
+                  color="black", fontface="plain",
                   box.padding = 0.5,
                   nudge_x = if_else(coi.mole$ProductName %in% c("Ellagic acid", "Tannic acid", "Ospemifene"), 1, 0),
                   
@@ -123,8 +130,34 @@ ggsave(filename = file.path(OUTPUT_DIR, "mole_joint_umap.png"), plot=u.mole, dpi
 ```
 
 
+```{r}
+mce_metadata <- completepreds %>% 
+  select(`Catalog Number`, ProductName,  nk_total, antibiotic) %>% 
+  rename("chem_id" = "Catalog Number") %>% 
+  
+  left_join(mce_litexamples, by="chem_id")
+  
+
+mole.umap %>% 
+  left_join(mce_metadata, by="chem_id") %>% 
+  select(-keep) %>% 
+  rename("n_predicted_inhibited_strains" = "nk_total") %>% 
+  write_tsv("../data/08.compare_mce_maier/umap_library_comparison.tsv")
+```
+
+
+
+
+
+
+
+
 The same but for ECFP4. 
 ```{r plot.umap.fps}
+
+mce_litexamples.umap <- mce_litexamples %>% 
+  left_join(ecfp4.umap, by="chem_id") %>% 
+  mutate(`Chemical Library` = "MCE (Predictions with reported activity)")
 
 coi.ecfp4 <- coi_df %>% 
   left_join(ecfp4.umap, by="chem_id")
@@ -133,17 +166,18 @@ coi.ecfp4 <- coi_df %>%
 
 u.ecfp4 <- ggplot(ecfp4.umap, aes(x=umap1, y=umap2, fill=`Chemical Library`)) +
   geom_point(size=1.5, color="white", shape=21, alpha=0.75) +
+  geom_point(data = mce_litexamples.umap, color="white", size=2.5, shape=21, alpha=0.75) +
   
   
   geom_text_repel(data = coi.ecfp4, aes(label=ProductName), 
-                  max.overlaps = Inf, size=3.5, min.segment.length = 0, 
-                  color="black", fontface="bold",
+                  max.overlaps = Inf, size=3, min.segment.length = 0, 
+                  color="black", fontface="plain",
                   box.padding = 0.5,
                    nudge_y = if_else(coi.mole$ProductName %in% c("Ospemifene", "Tannic acid"), -5, 0),
                   nudge_x = if_else(coi.mole$ProductName %in% c("Doxifluridine", "Ellagic acid"), -3, 0)) +
   
   
-  scale_fill_manual(values=c("#DE1F84", "#C5C5C5")) +
+  scale_fill_manual(values=c("#DE1F84", "#C5C5C5","#1F9DBB")) +
   
   theme_bw() +
   
@@ -181,5 +215,190 @@ umap.arranged <- ggarrange(u.mole + ggtitle("MolE"),
 umap.arranged
 ggsave(filename = file.path(OUTPUT_DIR, "joint_umap_panel.pdf"), plot=umap.arranged, dpi = 300,
        height = 11, width = 20, units="cm")
+```
+  
+## Comparing molecular similarity. 
+  
+```{r read.distance.qs}
+
+# Read molecular similarity
+mol.similarity <- read_tsv("../data/08.compare_mce_maier/ecfp4_distance_to_maier.tsv.gz", show_col_types = FALSE) %>% 
+  # Make tidy form to ease handling
+  pivot_longer(cols = -selected_chem, names_to = "prestwick_ID", values_to = "jaccard_distance") %>% 
+  
+  # Get tanimoto similarity
+  mutate(tanimoto_similarity = 1-jaccard_distance) %>% 
+
+  # Gather the ranking per molecule. Make sure to rank ties the same
+  group_by(selected_chem) %>% 
+  mutate(similarity_ranking = rank(-tanimoto_similarity, ties.method = "min"))
+
+# Read prestwick metadata
+maier_chems_metadata = read_excel("../raw_data/maier_microbiome/chem_library_info_SF1.xlsx") %>% 
+  select(prestwick_ID, `chemical name`, `target species`) %>% 
+  rename("prestwick_chemname" = "chemical name",
+         "target_species" = "target species")
+
+
+# Read screening results
+maier_screening_results <- read_tsv("../data/01.prepare_training_data/maier_screening_results.tsv.gz", show_col_types = FALSE) %>% 
+  # Gather chemicals used in training
+  filter(prestwick_ID %in% unique(mol.similarity$prestwick_ID)) %>% 
+  
+  # Count number of strains inhibited
+  pivot_longer(cols = -prestwick_ID, names_to = "strain", values_to = "growth_inhibition") %>% 
+  group_by(prestwick_ID) %>% 
+  summarise(n_inhibited_strains = sum(growth_inhibition)) %>% 
+  ungroup()
+
+
+# Join information
+mol.similarity <- mol.similarity %>% 
+  left_join(maier_chems_metadata, by="prestwick_ID") %>% 
+  left_join(maier_screening_results, by="prestwick_ID")
+
+```
+
+  
+Determine the most similar molecule percategory
+```{r}
+# Overall
+overall.most_similar <- mol.similarity %>% 
+  filter(similarity_ranking == 1) %>% 
+  # Thymidine has two molecules with equal ranking
+  head(6) %>% 
+  
+  mutate(sim_category = "Overall")
+
+# Most similar antibiotic
+abx.most_similar <- mol.similarity %>% 
+  filter(target_species == "bacteria") %>% 
+  group_by(selected_chem) %>% 
+  filter(similarity_ranking == min(similarity_ranking)) %>% 
+  mutate(sim_category = "Antibiotic")
+
+# Most similar non-antibiotic with broad spectrum activity
+nonabx.bsa.most_similar <- mol.similarity %>% 
+  filter(target_species != "bacteria",
+         n_inhibited_strains >= 10) %>% 
+  group_by(selected_chem) %>% 
+  filter(similarity_ranking == min(similarity_ranking)) %>% 
+  mutate(sim_category = "Non-antibiotic with BSA")
+
+
+most_similar.df <- bind_rows(overall.most_similar, abx.most_similar, nonabx.bsa.most_similar) %>% 
+  select(selected_chem, prestwick_ID, tanimoto_similarity, similarity_ranking, target_species, n_inhibited_strains, sim_category) %>% 
+  
+  # For some compounds, the same molecule is the most similar in more than one category. Let's choose the more specific annotation.
+  group_by(selected_chem, prestwick_ID) %>% 
+  slice_tail() %>% 
+  
+  # Prepare labelling
+  mutate(tansim_label = round(tanimoto_similarity, 2),
+         sim_category = factor(sim_category, levels=c("Overall", "Antibiotic", "Non-antibiotic with BSA")))
+  
+  
+most_similar.df
+```
+
+
+```{r}
+similarity.chosen <- ggplot(mol.similarity, aes(x=similarity_ranking, y=tanimoto_similarity)) +
+  geom_hline(yintercept = 0.3, linetype="longdash") +
+  
+  geom_point(size=1.8, color="white", shape=21, alpha=1, fill="#C5C5C5") +
+  geom_point(data=most_similar.df, aes(fill=sim_category, shape=sim_category), size=2, 
+             color="black", shape=21, alpha=0.75) +
+  
+  scale_fill_manual(values=c("#377eb8", "#e41a1c", "#1b9e77")) +
+  
+  
+  geom_text_repel(data = most_similar.df, aes(label=tansim_label), 
+                  max.overlaps = Inf, size=3.5, 
+                  min.segment.length = 0, 
+                  color="black", 
+                  fontface="plain",
+                  point.padding = 0.2,
+                  box.padding = 0.2,
+                  segment.size=0.3,
+                  
+                  nudge_y = case_when(most_similar.df$selected_chem == "Cetrorelix" & most_similar.df$sim_category == "Non-antibiotic with BSA" ~ -0.125,
+                                      most_similar.df$selected_chem == "Cetrorelix" & most_similar.df$sim_category == "Overall" ~ 0.125,
+                                      most_similar.df$selected_chem == "Cetrorelix" & most_similar.df$sim_category == "Antibiotic" ~ -0.05,
+                                      
+                                      most_similar.df$selected_chem == "Elvitegravir" & most_similar.df$sim_category == "Non-antibiotic with BSA" ~ -0.15,
+                                      most_similar.df$selected_chem == "Elvitegravir" & most_similar.df$sim_category == "Antibiotic" ~ 0.1255,
+                                      
+                                      most_similar.df$selected_chem == "Opicapone" & most_similar.df$sim_category == "Antibiotic" ~ 0.03,
+                                      most_similar.df$selected_chem == "Opicapone" & most_similar.df$sim_category == "Non-antibiotic with BSA" ~ 0.15,
+                                      
+                                      most_similar.df$selected_chem == "Visomitin" & most_similar.df$sim_category == "Overall" ~ 0.15,
+                                      most_similar.df$selected_chem == "Visomitin" & most_similar.df$sim_category == "Antibiotic" ~ -0.125,
+                                      
+                                      most_similar.df$selected_chem == "Ebastine" & most_similar.df$sim_category == "Antibiotic" ~ -0.15,
+                                      most_similar.df$selected_chem == "Ebastine" & most_similar.df$sim_category == "Overall" ~ 0.125,
+                                      
+                                      TRUE ~ 0),
+                  
+                  nudge_x = case_when(most_similar.df$selected_chem == "Ebastine" & most_similar.df$sim_category == "Non-antibiotic with BSA" ~ 125,
+                                      most_similar.df$selected_chem == "Ebastine" & most_similar.df$sim_category == "Overall" ~ 125,
+                                      
+                                      most_similar.df$selected_chem == "Thymidine" & most_similar.df$sim_category == "Non-antibiotic with BSA" ~ 150,
+                                      most_similar.df$selected_chem == "Thymidine" & most_similar.df$sim_category == "Antibiotic" ~ 150,
+                                      
+                                      most_similar.df$selected_chem == "Opicapone" & most_similar.df$sim_category == "Antibiotic" ~ 150,
+                                      
+                                      most_similar.df$selected_chem == "Elvitegravir" & most_similar.df$sim_category == "Antibiotic" ~ 100,
+                                      
+                                      most_similar.df$selected_chem == "Visomitin" & most_similar.df$sim_category == "Non-antibiotic with BSA" ~ 180,
+                                      
+                                      most_similar.df$selected_chem == "Cetrorelix" & most_similar.df$sim_category == "Antibiotic" ~ 125,
+                                      TRUE ~ 0)) +
+  
+  
+  facet_wrap(~selected_chem) +
+  
+  theme_bw() +
+  theme(legend.position = "bottom",
+        axis.text.x = element_text(size=6)) +
+  labs(x="Ranking of training set compounds",
+       y="Tanimoto similarity",
+       fill = "Similarity category")
+
+
+ggsave(plot=similarity.chosen, filename = "../data/08.compare_mce_maier/similarity_to_maier.png",
+       dpi = 300, width = 21, height = 12.5, units="cm")
+
+ggsave(plot=similarity.chosen, filename = "../data/08.compare_mce_maier/similarity_to_maier.pdf",
+       dpi = 300, width = 21, height = 12.5, units="cm")
+```
+
+
+
+```{r}
+most_similar_metadata <- most_similar.df %>% 
+  unite("selected_prest", c(selected_chem, prestwick_ID), sep=":") %>% 
+  select(selected_prest, sim_category)
+```
+
+
+
+
+```{r}
+
+mol.similarity %>% 
+  unite("selected_prest", c(selected_chem, prestwick_ID), sep=":", remove=FALSE) %>% 
+  
+  left_join(most_similar_metadata, by="selected_prest") %>% 
+  select(-selected_prest) %>% 
+  
+  arrange(selected_chem, similarity_ranking) %>% 
+  
+  rename("measured_n_inhibited_strains" = "n_inhibited_strains",
+         "most_similar_category" = "sim_category") %>%
+  write_tsv("../data/08.compare_mce_maier/selected_prestwick_tanimoto.tsv")
+  
+  
+
 ```
 

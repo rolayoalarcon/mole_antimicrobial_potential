@@ -1,0 +1,81 @@
+pred_id	antimicrobial_predictive_probability	growth_inhibition
+Halicin:Akkermansia muciniphila (NT5021)	0.021192694	0
+Halicin:Bacteroides caccae (NT5050)	0.20044225	1
+Halicin:Bacteroides fragilis (ET) (NT5033)	0.13638856	1
+Halicin:Bacteroides fragilis (NT) (NT5003)	0.31997114	1
+Halicin:Bacteroides ovatus (NT5054)	0.18697909	1
+Halicin:Bacteroides thetaiotaomicron (NT5004)	0.13655038	1
+Halicin:Bacteroides uniformis (NT5002)	0.20608483	1
+Halicin:Bacteroides vulgatus (NT5001)	0.20358992	1
+Halicin:Bacteroides xylanisolvens (NT5064)	0.14571722	1
+Halicin:Bifidobacterium adolescentis (NT5022)	0.13033158	1
+Halicin:Bifidobacterium longum (NT5028)	0.062367305	1
+Halicin:Bilophila wadsworthia (NT5036)	0.12167165	1
+Halicin:Blautia obeum (NT5069)	0.94394296	1
+Halicin:Clostridium bolteae (NT5026)	0.37628254	1
+Halicin:Clostridium difficile (NT5083)	0.4770033	1
+Halicin:Clostridium perfringens (NT5032)	0.18091147	1
+Halicin:Clostridium ramosum (NT5006)	0.15356177	1
+Halicin:Clostridium saccharolyticum (NT5037)	0.10375723	1
+Halicin:Collinsella aerofaciens (NT5073)	0.5390059	1
+Halicin:Coprococcus comes (NT5048)	0.7449787	1
+Halicin:Dorea formicigenerans (NT5076)	0.37953573	1
+Halicin:Eggerthella lenta (NT5024)	0.4475104	1
+Halicin:Escherichia coli ED1a (NT5078)	0.042280074	0
+Halicin:Escherichia coli IAI1 (NT5077)	0.052755695	1
+Halicin:Eubacterium eligens (NT5075)	0.117745556	1
+Halicin:Eubacterium rectale (NT5009)	0.46077713	1
+Halicin:Fusobacterium nucleatum (NT5025)	0.22971949	1
+Halicin:Lactobacillus paracasei (NT5042)	0.0017916544	0
+Halicin:Odoribacter splanchnicus (NT5081)	0.18362293	1
+Halicin:Parabacteroides distasonis (NT5074)	0.07335632	1
+Halicin:Parabacteroides merdae (NT5071)	0.2151166	1
+Halicin:Prevotella copri (NT5019)	0.7571476	1
+Halicin:Roseburia hominis (NT5079)	0.15118462	1
+Halicin:Roseburia intestinalis (NT5011)	0.2040564	1
+Halicin:Ruminococcus bromii (NT5045)	0.28551665	1
+Halicin:Ruminococcus gnavus (NT5046)	0.19108754	1
+Halicin:Ruminococcus torques (NT5047)	0.15882453	1
+Halicin:Streptococcus parasanguinis (NT5072)	0.03342396	0
+Halicin:Streptococcus salivarius (NT5038)	0.016695198	0
+Halicin:Veillonella parvula (NT5017)	0.563656	1
+Abaucin:Akkermansia muciniphila (NT5021)	0.010850511	0
+Abaucin:Bacteroides caccae (NT5050)	0.00038989924	0
+Abaucin:Bacteroides fragilis (ET) (NT5033)	0.00023044848	0
+Abaucin:Bacteroides fragilis (NT) (NT5003)	0.00030910745	0
+Abaucin:Bacteroides ovatus (NT5054)	0.000280982	0
+Abaucin:Bacteroides thetaiotaomicron (NT5004)	9.858348e-05	0
+Abaucin:Bacteroides uniformis (NT5002)	0.0007654896	0
+Abaucin:Bacteroides vulgatus (NT5001)	0.0071923616	0
+Abaucin:Bacteroides xylanisolvens (NT5064)	0.00029069497	0
+Abaucin:Bifidobacterium adolescentis (NT5022)	3.6351506e-05	0
+Abaucin:Bifidobacterium longum (NT5028)	0.00011216595	0
+Abaucin:Bilophila wadsworthia (NT5036)	3.938553e-05	0
+Abaucin:Blautia obeum (NT5069)	0.00032133574	0
+Abaucin:Clostridium bolteae (NT5026)	2.8648043e-05	0
+Abaucin:Clostridium difficile (NT5083)	0.00065972086	0
+Abaucin:Clostridium perfringens (NT5032)	0.00070958113	0
+Abaucin:Clostridium ramosum (NT5006)	4.4322936e-05	0
+Abaucin:Clostridium saccharolyticum (NT5037)	0.00010885009	0
+Abaucin:Collinsella aerofaciens (NT5073)	0.0015292147	0
+Abaucin:Coprococcus comes (NT5048)	0.0008538641	0
+Abaucin:Dorea formicigenerans (NT5076)	0.0035672195	0
+Abaucin:Eggerthella lenta (NT5024)	9.539063e-05	0
+Abaucin:Escherichia coli ED1a (NT5078)	5.970977e-06	0
+Abaucin:Escherichia coli IAI1 (NT5077)	5.8771557e-06	0
+Abaucin:Eubacterium eligens (NT5075)	0.013760136	0
+Abaucin:Eubacterium rectale (NT5009)	0.33915454	1
+Abaucin:Fusobacterium nucleatum (NT5025)	1.4960365e-05	0
+Abaucin:Lactobacillus paracasei (NT5042)	0.00017087636	0
+Abaucin:Odoribacter splanchnicus (NT5081)	0.00082051085	0
+Abaucin:Parabacteroides distasonis (NT5074)	0.00075023563	0
+Abaucin:Parabacteroides merdae (NT5071)	0.00039613823	0
+Abaucin:Prevotella copri (NT5019)	0.0110927345	0
+Abaucin:Roseburia hominis (NT5079)	0.00043478797	0
+Abaucin:Roseburia intestinalis (NT5011)	0.003588201	0
+Abaucin:Ruminococcus bromii (NT5045)	0.00012148986	0
+Abaucin:Ruminococcus gnavus (NT5046)	0.015503465	0
+Abaucin:Ruminococcus torques (NT5047)	0.0009825114	0
+Abaucin:Streptococcus parasanguinis (NT5072)	0.000108795815	0
+Abaucin:Streptococcus salivarius (NT5038)	4.0851235e-05	0
+Abaucin:Veillonella parvula (NT5017)	0.004400194	0

@@ -1640,7 +1640,7 @@ ggsave(plot=gentime.bp, filename = file.path(GPARAM_OUTPUT_DIR, paste0(compound_
 
 
 
-```{r}
+```{r, eval=FALSE, echo=FALSE, include=FALSE}
 ebas.data <- compound.params %>% 
   filter(organism == "SA", 
          chem_conc == "16") %>% 
@@ -1839,7 +1839,7 @@ ggsave(plot=gentime.bp, filename = file.path(GPARAM_OUTPUT_DIR, paste0(compound_
 
 
 
-```{r}
+```{r, eval=FALSE, echo=FALSE, include=FALSE}
 opi.data <- compound.params %>% 
   filter(organism == "SA", 
          chem_conc == "16") %>% 

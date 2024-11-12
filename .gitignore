@@ -49,3 +49,5 @@ data/test_output/**
 raw_data/maier_microbiome/commontree_wPath.txt
 raw_data/maier_microbiome/commontree.txt
 raw_data/maier_microbiome/phyliptree.phy
+
+workflow/prep_source_data.ipynb

@@ -1,4 +1,4 @@
-name: mole_test
+name: mole
 channels:
   - pytorch
   - nvidia

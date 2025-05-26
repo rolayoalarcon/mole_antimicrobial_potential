@@ -1,12 +1,12 @@
 # Using MolE to predict antimicrobial activity  
 
-In this project, we use MolE's pre-trained representation to train XGBoost models to predict the antimicrobial activity of compounds based on their molecular structure. This repository contains all of the scripts and data used to obtain the results presented in our [pre-print](#pre-print).  
+In this project, we use MolE's pre-trained representation to train XGBoost models to predict the antimicrobial activity of compounds based on their molecular structure. This repository contains all of the scripts and data used to obtain the results presented in our [paper](#publication).  
 
 For more information about the MolE pre-training framework, you can visit the [MolE](https://github.com/rolayoalarcon/MolE) repository.
 
-## Pre-print  
-For more information about MolE, and how we use it to predict antimicriobal activity you can check out our pre-print on bioarxiv:  
-[**Pre-trained molecular representations enable antimicrobial discovery**](https://www.biorxiv.org/content/10.1101/2024.03.11.584456v2)  
+## Publication
+For more information about MolE, and how we use it to predict antimicrobial activity, you can check out our paper in Nature Communications:  
+[**Pre-trained molecular representations enable antimicrobial discovery**](https://www.nature.com/articles/s41467-025-58804-4)  
 
 ## Contents  
 This repository contains all of the scripts and data used to obtain the results presented in our [pre-print](#pre-print).   

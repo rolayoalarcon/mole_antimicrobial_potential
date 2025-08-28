@@ -256,13 +256,13 @@ def antimicrobial_potential(score_df, strain_filepath):
     # Aggregate complete antimicrobial potential
     # Antimicrobial potential score
     apscore_total = pred_df.groupby("chem_id")["1"].apply(gmean).to_frame().rename(columns={"1": "apscore_total"})
-    apscore_total["apscore_total"] = np.log(apscore_total["apscore_total"])
+    apscore_total["apscore_total"] = np.log2(apscore_total["apscore_total"])
 
     # Antimicrobial score by gram stain
     apscore_gram = pred_df.groupby(["chem_id", "gram_stain"])["1"].apply(gmean).unstack().rename(columns={"negative": "apscore_gnegative",
                                                                                                          "positive": "apscore_gpositive"})
-    apscore_gram["apscore_gnegative"] = np.log(apscore_gram["apscore_gnegative"])
-    apscore_gram["apscore_gpositive"] = np.log(apscore_gram["apscore_gpositive"])
+    apscore_gram["apscore_gnegative"] = np.log2(apscore_gram["apscore_gnegative"])
+    apscore_gram["apscore_gpositive"] = np.log2(apscore_gram["apscore_gpositive"])
     
     # Number inhibited strains
     inhibted_total = pred_df.groupby("chem_id")["growth_inhibition"].sum().to_frame().rename(columns={"growth_inhibition": "ginhib_total"})
